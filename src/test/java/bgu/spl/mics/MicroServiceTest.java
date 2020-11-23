@@ -8,8 +8,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MicroServiceTest {
 
+    MicroService m;
     @BeforeEach
     void setUp() {
+        m=new MicroService();
     }
 
     @AfterEach

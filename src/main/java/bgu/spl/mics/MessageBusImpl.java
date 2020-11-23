@@ -1,6 +1,4 @@
 package bgu.spl.mics;
-import bgu.spl.mics.application.messages.AttackEvent;
-
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -13,7 +11,7 @@ public class MessageBusImpl implements MessageBus {
 	Vector<ConcurrentLinkedQueue<Message>> VecOfQueues;
 	ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
 	Vector<MicroService> AttackEventServices;
-
+	
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		
@@ -50,7 +48,9 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void unregister(MicroService m) {
-		
+		ConcurrentLinkedQueue<Message> queue=microServiceMap.get(m);
+		VecOfQueues.remove(queue);
+		microServiceMap.remove(m);
 	}
 
 	@Override
