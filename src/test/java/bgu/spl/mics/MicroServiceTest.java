@@ -11,7 +11,7 @@ class MicroServiceTest {
     MicroService m;
     @BeforeEach
     void setUp() {
-        m=new MicroService();
+        m=new HanSoloMicroService("Han");
     }
 
     @AfterEach
@@ -48,6 +48,7 @@ class MicroServiceTest {
 
     @Test
     void testGetName() {
+        assertEquals(m.getName(),"Han");
     }
 
     @Test

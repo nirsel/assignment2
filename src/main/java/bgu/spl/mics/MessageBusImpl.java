@@ -8,10 +8,21 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	Vector<ConcurrentLinkedQueue<Message>> VecOfQueues;
-	ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
-	Vector<MicroService> AttackEventServices;
-	
+
+	private static MessageBus instance=null; //singleton
+	private Vector<ConcurrentLinkedQueue<Message>> VecOfQueues;
+	private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
+	private Vector<MicroService> AttackEventServices;
+
+	private MessageBusImpl(){ //todo:constructor
+
+	}
+
+	public static MessageBus getInstance(){ //singleton getInstance
+		if (instance==null)
+			instance=new MessageBusImpl();
+		return instance;
+	}
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		

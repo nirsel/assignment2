@@ -57,4 +57,7 @@ class MessageBusImplTest {
     }
 
 
+    @Test
+    void getInstance() {
+    }
 }
