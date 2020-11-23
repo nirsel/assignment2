@@ -10,18 +10,29 @@ public class Ewok {
 	int serialNumber;
 	boolean available;
 	
-  
+    public Ewok(int number){
+        serialNumber=number;
+        available=true;
+    }
+
+    public Ewok(){
+        available=true;
+    }
     /**
      * Acquires an Ewok
      */
     public void acquire() {
-		
+		available=false;
     }
 
     /**
      * release an Ewok
      */
     public void release() {
-    	
+    	available=false;
+    }
+
+    public boolean isAvailable(){
+        return available;
     }
 }
