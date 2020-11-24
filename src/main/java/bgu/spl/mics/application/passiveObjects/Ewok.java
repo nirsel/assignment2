@@ -16,9 +16,6 @@ public class Ewok {
         available=true;
     }
 
-    public Ewok(){
-        available=true;
-    }
     /**
      * Acquires an Ewok
      */

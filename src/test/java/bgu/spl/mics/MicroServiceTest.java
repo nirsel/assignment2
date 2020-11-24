@@ -16,14 +16,27 @@ class MicroServiceTest {
 
     @AfterEach
     void tearDown() {
+        //m=null;
     }
 
     @Test
     void testSubscribeEvent() {
+        /*
+        create some kind of event
+        check if not alrealy subscribed?
+        subscribe him using message bus
+        check if he is subscribed (using message bus method?)
+         */
     }
 
     @Test
     void testSubscribeBroadcast() {
+        /*
+        create some kind of Broadcast
+        check if not alrealy subscribed?
+        subscribe him using message bus
+        check if he is subscribed (using message bus method?)
+         */
     }
 
     @Test
@@ -32,6 +45,11 @@ class MicroServiceTest {
 
     @Test
     void testSendBroadcast() {
+        /*
+        create some kind of broadcast
+        send broadcast
+        check if all of the registered MS got the broadcast (in their message queue)
+         */
     }
 
     @Test
