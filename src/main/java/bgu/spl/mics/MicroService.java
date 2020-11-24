@@ -1,6 +1,5 @@
 package bgu.spl.mics;
 
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The MicroService is an abstract class that any micro-service in the system
