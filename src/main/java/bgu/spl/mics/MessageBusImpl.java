@@ -12,7 +12,8 @@ public class MessageBusImpl implements MessageBus {
 	private static MessageBus instance=null; //singleton
 	private Vector<ConcurrentLinkedQueue<Message>> VecOfQueues;
 	private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
-	private Vector<MicroService> AttackEventServices;
+	private Vector<ConcurrentLinkedQueue<MicroService>> subscribeQueue;
+	private ConcurrentHashMap<Message,ConcurrentLinkedQueue<MicroService>> messageMap;
 
 	private MessageBusImpl(){ //todo:constructor
 
