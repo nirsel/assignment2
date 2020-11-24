@@ -11,7 +11,7 @@ class MicroServiceTest {
     MicroService m;
     @BeforeEach
     void setUp() {
-        m=new HanSoloMicroService("Han");
+        m=new HanSoloMicroService();
     }
 
     @AfterEach

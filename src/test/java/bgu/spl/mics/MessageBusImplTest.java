@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.messages.AttackEvent;
+import bgu.spl.mics.application.services.HanSoloMicroservice;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,16 +13,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MessageBusImplTest {
 
-    Vector<ConcurrentLinkedQueue<Message>> VecOfQueues;
+    MessageBusImpl bus;
 
     @BeforeEach
     void setUp() {
-        VecOfQueues=new Vector<ConcurrentLinkedQueue<Message>>();
+        bus=MessageBusImpl.getInstance();
+
     }
 
     @AfterEach
     void tearDown() {
         //destroying all fields?
+
     }
 
     @Test
@@ -29,6 +33,12 @@ class MessageBusImplTest {
         Create new microservice, register him to event
         check if he is subscribed
          */
+        MicroService service=new HanSoloMicroservice();
+        Class event=AttackEvent.class.getClass();
+        bus.subscribeEvent(event,service);
+        assertTrue(bus.isSubscribed(event,service));
+        bus.
+
     }
 
     @Test
@@ -86,6 +96,7 @@ class MessageBusImplTest {
 
 
     @Test
-    void getInstance() {
+    void testGetInstance() {
+        assertEquals(bus.getClass(),MessageBusImpl.class.getClass());
     }
 }
