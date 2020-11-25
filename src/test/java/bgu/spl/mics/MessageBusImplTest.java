@@ -60,6 +60,8 @@ class MessageBusImplTest {
          */
         MicroService m1 = new HanSoloMicroservice();
         MicroService m2 = new HanSoloMicroservice();
+        bus.register(m1);
+        bus.register(m2);
         TerminateBroadcast broad = new TerminateBroadcast();
         m1.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test1");});
         m2.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test2");});
@@ -77,6 +79,8 @@ class MessageBusImplTest {
          */
         MicroService m1 = new HanSoloMicroservice();
         MicroService m2 = new HanSoloMicroservice();
+        bus.register(m1);
+        bus.register(m2);
         AttackEvent ev =  new AttackEvent();
         m1.subscribeEvent(ev.getClass(), (c) -> {System.out.println("hey, event test1");});
         m2.subscribeEvent(ev.getClass(), (c) -> {System.out.println("hey, event test2");});
