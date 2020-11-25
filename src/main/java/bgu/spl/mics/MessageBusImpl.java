@@ -9,21 +9,22 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class MessageBusImpl implements MessageBus {
 
-	private static MessageBusImpl instance=null; //singleton
 	private Vector<ConcurrentLinkedQueue<Message>> messageQueues;
 	private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
 	private Vector<ConcurrentLinkedQueue<MicroService>> subscribeQueue;
 	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> messageMap;
+	private static class MessageBusImplHolder {
+		private static MessageBusImpl instance=new MessageBusImpl();
+	}
 
 	private MessageBusImpl(){ //todo:constructor
 
 	}
 
-	public static MessageBusImpl getInstance(){ //singleton getInstance WRONG
-		if (instance==null)
-			instance=new MessageBusImpl();
-		return instance;
+	public static MessageBusImpl getInstance(){
+		return MessageBusImplHolder.instance;
 	}
+
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		
