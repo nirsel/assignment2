@@ -124,14 +124,7 @@ class MessageBusImplTest {
 
     @Test
     void testAwaitMessage() {
-        MicroService m1 = new HanSoloMicroservice();
-        try {
-            bus.awaitMessage(m1);
-            assertTrue(false);                    }
-        catch(Exception e) {
-            bus.register(m1);
-            //need to subscribe him, send him message and check if he got it
-        }
+
     }
 
 
