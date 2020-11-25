@@ -31,12 +31,18 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testSubscribeEvent()  {
+    void testSubscribeEvent() throws InterruptedException {
         /*
         Create new microservice, register him to event
         check if he is subscribed
          */
-
+        MicroService m1 = new HanSoloMicroservice();
+        bus.register(m1);
+        AttackEvent ev = new AttackEvent();
+        bus.subscribeEvent(ev.getClass(),m1);
+        bus.sendEvent(ev);
+        bus.awaitMessage(m1);
+        //check if m1 got the event somehow
 
     }
 
@@ -46,6 +52,11 @@ class MessageBusImplTest {
         create new microservice, register him to broadcast
         check if he is subscribed
          */
+        MicroService m1 = new HanSoloMicroservice();
+        bus.register(m1);
+        TerminateBroadcast broad = new TerminateBroadcast();
+        m1.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test1");});
+        bus.subscribeBroadcast(broad.getClass(),m1);
     }
 
     @Test
@@ -63,13 +74,12 @@ class MessageBusImplTest {
         bus.register(m1);
         bus.register(m2);
         TerminateBroadcast broad = new TerminateBroadcast();
-        m1.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test1");});
-        m2.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test2");});
         bus.subscribeBroadcast(broad.getClass(),m1);
         bus.subscribeBroadcast(broad.getClass(),m2);
         bus.sendBroadcast(broad);
         bus.awaitMessage(m1);
         bus.awaitMessage(m2);
+        //check if m1 and m2 got the broadcast
     }
 
     @Test
