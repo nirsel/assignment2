@@ -1,5 +1,8 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.messages.AttackEvent;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
+import bgu.spl.mics.application.services.HanSoloMicroservice;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,6 +44,14 @@ class MicroServiceTest {
 
     @Test
     void testSendEvent() {
+        AttackEvent ev = new AttackEvent();
+        MicroService m2 = new HanSoloMicroservice();
+        MessageBus bus=MessageBusImpl.getInstance();
+        bus.register(m);
+        bus.register(m2);
+        m2.subscribeEvent(ev.getClass(),(c)->{System.out.println("sendevent test1");});
+        m.sendEvent(ev);
+        //check if m2 got the event somehow
     }
 
     @Test
@@ -50,6 +61,14 @@ class MicroServiceTest {
         send broadcast
         check if all of the registered MS got the broadcast (in their message queue)
          */
+        Broadcast broad = new TerminateBroadcast();
+        MicroService m2 = new HanSoloMicroservice();
+        MessageBus bus=MessageBusImpl.getInstance();
+        bus.register(m);
+        bus.register(m2);
+        m2.subscribeBroadcast(broad.getClass(),(c)->{System.out.println("sendbroadcast test1");});
+        m.sendBroadcast(broad);
+        //check if m2 got the broadcast somehow
     }
 
     @Test
