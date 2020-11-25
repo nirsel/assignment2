@@ -74,8 +74,8 @@ class MessageBusImplTest {
         bus.register(m1);
         bus.register(m2);
         TerminateBroadcast broad = new TerminateBroadcast();
-        bus.subscribeBroadcast(broad.getClass(),m1);
-        bus.subscribeBroadcast(broad.getClass(),m2);
+        m1.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test1");});
+        m2.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test1");});
         bus.sendBroadcast(broad);
         bus.awaitMessage(m1);
         bus.awaitMessage(m2);
@@ -94,8 +94,6 @@ class MessageBusImplTest {
         AttackEvent ev =  new AttackEvent();
         m1.subscribeEvent(ev.getClass(), (c) -> {System.out.println("hey, event test1");});
         m2.subscribeEvent(ev.getClass(), (c) -> {System.out.println("hey, event test2");});
-        bus.subscribeEvent(ev.getClass(),m1);
-        bus.subscribeEvent(ev.getClass(),m2);
         bus.sendEvent(ev);
         bus.sendEvent(ev);
         bus.awaitMessage(m1);
