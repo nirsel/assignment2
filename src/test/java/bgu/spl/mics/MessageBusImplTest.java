@@ -1,7 +1,10 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.messages.AttackEvent;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
+import bgu.spl.mics.application.passiveObjects.Attack;
 import bgu.spl.mics.application.services.HanSoloMicroservice;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,16 +31,12 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testSubscribeEvent() {
+    void testSubscribeEvent()  {
         /*
         Create new microservice, register him to event
         check if he is subscribed
          */
-        MicroService service=new HanSoloMicroservice();
-        Class event=AttackEvent.class.getClass();
-        bus.subscribeEvent(event,service);
-        assertTrue(bus.isSubscribed(event,service));
-        bus.
+
 
     }
 
@@ -54,18 +53,39 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testSendBroadcast() {
+    void testSendBroadcast() throws InterruptedException {
         /*
         create microservice, send new broadcast
         check if all the relevant microservices got the broadcast (it is in their message queue)
          */
+        MicroService m1 = new HanSoloMicroservice();
+        MicroService m2 = new HanSoloMicroservice();
+        TerminateBroadcast broad = new TerminateBroadcast();
+        m1.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test1");});
+        m2.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test2");});
+        bus.subscribeBroadcast(broad.getClass(),m1);
+        bus.subscribeBroadcast(broad.getClass(),m2);
+        bus.sendBroadcast(broad);
+        bus.awaitMessage(m1);
+        bus.awaitMessage(m2);
     }
 
     @Test
-    void testSendEvent() {
+    void testSendEvent() throws InterruptedException {
         /*
 
          */
+        MicroService m1 = new HanSoloMicroservice();
+        MicroService m2 = new HanSoloMicroservice();
+        AttackEvent ev =  new AttackEvent();
+        m1.subscribeEvent(ev.getClass(), (c) -> {System.out.println("hey, event test1");});
+        m2.subscribeEvent(ev.getClass(), (c) -> {System.out.println("hey, event test2");});
+        bus.subscribeEvent(ev.getClass(),m1);
+        bus.subscribeEvent(ev.getClass(),m2);
+        bus.sendEvent(ev);
+        bus.sendEvent(ev);
+        bus.awaitMessage(m1);
+        bus.awaitMessage(m2);
     }
 
     @Test

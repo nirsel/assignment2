@@ -10,4 +10,5 @@ public class AttackEvent implements Event<Boolean> {
 	public void setResult(Future<Boolean> result) {
 		this.result = result;
 	}
+
 }

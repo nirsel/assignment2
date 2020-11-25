@@ -19,7 +19,7 @@ public class MessageBusImpl implements MessageBus {
 
 	}
 
-	public static MessageBusImpl getInstance(){ //singleton getInstance
+	public static MessageBusImpl getInstance(){ //singleton getInstance WRONG
 		if (instance==null)
 			instance=new MessageBusImpl();
 		return instance;
