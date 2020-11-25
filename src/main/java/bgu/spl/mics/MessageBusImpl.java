@@ -23,6 +23,7 @@ public class MessageBusImpl implements MessageBus {
 
 	public static MessageBusImpl getInstance(){
 		return MessageBusImplHolder.instance;
+
 	}
 
 	@Override
