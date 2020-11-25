@@ -9,17 +9,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class MessageBusImpl implements MessageBus {
 
-	private static MessageBus instance=null; //singleton
-	private Vector<ConcurrentLinkedQueue<Message>> VecOfQueues;
+	private static MessageBusImpl instance=null; //singleton
+	private Vector<ConcurrentLinkedQueue<Message>> messageQueues;
 	private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
 	private Vector<ConcurrentLinkedQueue<MicroService>> subscribeQueue;
-	private ConcurrentHashMap<Message,ConcurrentLinkedQueue<MicroService>> messageMap;
+	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> messageMap;
 
 	private MessageBusImpl(){ //todo:constructor
 
 	}
 
-	public static MessageBus getInstance(){ //singleton getInstance
+	public static MessageBusImpl getInstance(){ //singleton getInstance WRONG
 		if (instance==null)
 			instance=new MessageBusImpl();
 		return instance;
@@ -55,13 +55,13 @@ public class MessageBusImpl implements MessageBus {
 	public void register(MicroService m) {
 		ConcurrentLinkedQueue<Message> newQueue=new ConcurrentLinkedQueue<Message>();
 		microServiceMap.put(m,newQueue);
-		VecOfQueues.add(newQueue);
+		messageQueues.add(newQueue);
 	}
 
 	@Override
 	public void unregister(MicroService m) {
 		ConcurrentLinkedQueue<Message> queue=microServiceMap.get(m);
-		VecOfQueues.remove(queue);
+		messageQueues.remove(queue);
 		microServiceMap.remove(m);
 	}
 
@@ -69,5 +69,10 @@ public class MessageBusImpl implements MessageBus {
 	public Message awaitMessage(MicroService m) throws InterruptedException {
 		
 		return null;
+	}
+
+	private boolean isSubscribed(Class<? extends Message> type, MicroService m){
+		ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type);
+		return queue.contains(m);
 	}
 }
