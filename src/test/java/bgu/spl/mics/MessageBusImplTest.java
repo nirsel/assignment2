@@ -1,10 +1,10 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.AttackEventCallback;
-import bgu.spl.mics.application.FutureCallback;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Attack;
+import bgu.spl.mics.application.services.DummyMS;
 import bgu.spl.mics.application.services.HanSoloMicroservice;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.junit.jupiter.api.AfterEach;
@@ -72,17 +72,18 @@ class MessageBusImplTest {
         create microservice, send new broadcast
         check if all the relevant microservices got the broadcast (it is in their message queue)
          */
-        MicroService m1 = new HanSoloMicroservice();
-        MicroService m2 = new HanSoloMicroservice();
+        DummyMS m1 = new DummyMS("solo");
+        DummyMS m2 = new DummyMS("han");
         bus.register(m1);
         bus.register(m2);
         TerminateBroadcast broad = new TerminateBroadcast();
-        m1.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test1");});
-        m2.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test1");});
+        m1.subscribeBroadcast(TerminateBroadcast.class, new DummyMS.CallbackTest());
+        m2.subscribeBroadcast(TerminateBroadcast.class, new DummyMS.CallbackTest());
         bus.sendBroadcast(broad);
         bus.awaitMessage(m1);
-        bus.awaitMessage(m2);
-        //check if m1 and m2 got the broadcast
+        bus.awaitMessage(m2); // assuming there is  a message in the queue according to forum
+        assertEquals(m1.getNum(), 2);
+        assertEquals(m2.getNum(), 2);
     }
 
     @Test
