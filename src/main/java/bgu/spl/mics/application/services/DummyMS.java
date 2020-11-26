@@ -1,7 +1,7 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.Callback;
-import bgu.spl.mics.MicroService;
+import bgu.spl.mics.*;
+import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 
 public class DummyMS extends MicroService {
@@ -20,8 +20,13 @@ public class DummyMS extends MicroService {
         return num;
     }
 
+
     @Override
-    protected void initialize() {
+    public void initialize() {
+        MessageBusImpl bus = MessageBusImpl.getInstance();
+        bus.register(this);
+        subscribeEvent(AttackEvent.class, new DummyMS.CallbackTest2());
+        subscribeBroadcast(TerminateBroadcast.class, new DummyMS.CallbackTest());
     }
 
     public static class CallbackTest implements Callback<TerminateBroadcast>{
@@ -29,6 +34,14 @@ public class DummyMS extends MicroService {
         @Override
         public void call(TerminateBroadcast c) throws InterruptedException {
                 DummyMS.num = 2;
+        }
+    }
+
+    public static class CallbackTest2 implements Callback<AttackEvent>{
+
+        @Override
+        public void call(AttackEvent c) throws InterruptedException {
+            DummyMS.num = 3;
         }
     }
 }

@@ -27,59 +27,46 @@ class MessageBusImplTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() { // todo ?
         //destroying all fields?
 
     }
 
     @Test
-    void testSubscribeEvent() throws InterruptedException { //maybe not necessary
-        /*
-        Create new microservice, register him to event
-        check if he is subscribed
-         */
-        MicroService m1 = new HanSoloMicroservice();
-        bus.register(m1);
-        AttackEvent ev = new AttackEvent();
-        bus.subscribeEvent(ev.getClass(),m1);
-        bus.sendEvent(ev);
-        bus.awaitMessage(m1);
-        assertTrue(ev.getResult().isDone()); //right???
-        //check if m1 got the event somehow
+    void testSubscribeEvent() {
+         /*
+        we are not checking this method since the test "testSendEvent" is calling "SubscribeEvent"
+        of MicroService and the latter is calling "SubscribeEvent" of MessageBus. Therefore, "testSendEvent"
+        checks the correctness of this method as well. Also, testing this method is duplicating "testSendEvent" code".
+        */
 
     }
 
     @Test
     void testSubscribeBroadcast() {
         /*
-        create new microservice, register him to broadcast
-        check if he is subscribed
-         */
-        MicroService m1 = new HanSoloMicroservice();
-        bus.register(m1);
-        TerminateBroadcast broad = new TerminateBroadcast();
-        m1.subscribeBroadcast(broad.getClass(), (c) -> {System.out.println("hey, broadcast test1");});
-        bus.subscribeBroadcast(broad.getClass(),m1);
+        we are not checking this method since the test "testSendBroadcast" is calling "SubscribeBroadcast"
+        of MicroService and the latter is calling "SubscribeBroadCast" of MessageBus. Therefore, "testSendBroadcast"
+        checks the correctness of this method as well. Also, testing this method is duplicating "testSendBroadcast" code".
+        */
     }
 
     @Test
     void testComplete() {
+        DummyMS m1 = new DummyMS("solo");
+        AttackEvent ev1 =  new AttackEvent();
+        m1.initialize();
+        bus.awaitMessage(m1);
     }
 
     @Test
     void testSendBroadcast() throws InterruptedException {
-        /*
-        create microservice, send new broadcast
-        check if all the relevant microservices got the broadcast (it is in their message queue)
-         */
         DummyMS m1 = new DummyMS("solo");
         DummyMS m2 = new DummyMS("han");
-        bus.register(m1);
-        bus.register(m2);
         TerminateBroadcast broad = new TerminateBroadcast();
-        m1.subscribeBroadcast(TerminateBroadcast.class, new DummyMS.CallbackTest());
-        m2.subscribeBroadcast(TerminateBroadcast.class, new DummyMS.CallbackTest());
         bus.sendBroadcast(broad);
+        m1.initialize();
+        m2.initialize();
         bus.awaitMessage(m1);
         bus.awaitMessage(m2); // assuming there is  a message in the queue according to forum
         assertEquals(m1.getNum(), 2);
@@ -88,34 +75,24 @@ class MessageBusImplTest {
 
     @Test
     void testSendEvent() throws InterruptedException {
-        /*
 
-         */
-        MicroService m1 = new HanSoloMicroservice();
-        MicroService m2 = new HanSoloMicroservice();
-        bus.register(m1);
-        bus.register(m2);
+        DummyMS m1 = new DummyMS("han");
+        DummyMS m2 = new DummyMS("solo");
         AttackEvent ev1 =  new AttackEvent();
         AttackEvent ev2 =  new AttackEvent();
-        Callback<AttackEvent> func = new AttackEventCallback();
-        m1.subscribeEvent(AttackEvent.class, func);
-        m2.subscribeEvent(AttackEvent.class, func);
         bus.sendEvent(ev1);
         bus.sendEvent(ev2);
+        m1.initialize();
+        m2.initialize();
         bus.awaitMessage(m1);
         bus.awaitMessage(m2);
-        assertTrue(ev1.getResult().isDone());
-        assertTrue(ev2.getResult().isDone());
+        assertEquals(m1.getNum(), 3);
+        assertEquals(m2.getNum(), 3);
     }
 
     @Test
     void testRegister() {
-        /*
-        create new microservice
-        check if he is not already registered (exception?)
-        register
-        check if he is registered
-         */
+        // don't need to check this function according to the forum.
 
     }
 
@@ -125,13 +102,13 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testAwaitMessage() {
+    void testAwaitMessage() { // todo
 
     }
 
 
     @Test
-    void testGetInstance() {
+    void testGetInstance() { //todo: check
         assertEquals(bus.getClass(),MessageBusImpl.class.getClass());
     }
 }
