@@ -120,13 +120,7 @@ class MessageBusImplTest {
 
     @Test
     void testUnregister() {
-        /*
-        create new microservice
-        register him
-        check if he is registered
-        unregister
-        check if he is unregistered
-         */
+        // don't need to check this function according to the forum.
     }
 
     @Test
