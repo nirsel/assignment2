@@ -2,6 +2,8 @@ package bgu.spl.mics;
 
 import bgu.spl.mics.application.AttackEventCallback;
 import bgu.spl.mics.application.messages.AttackEvent;
+import bgu.spl.mics.application.messages.ExampleBroadcast;
+import bgu.spl.mics.application.messages.ExampleEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Attack;
 import bgu.spl.mics.application.services.DummyMS;
@@ -22,7 +24,7 @@ class MessageBusImplTest {
 
     @BeforeEach
     void setUp() {
-        bus=MessageBusImpl.getInstance();
+        bus = MessageBusImpl.getInstance();
 
     }
 
@@ -52,47 +54,43 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testComplete() {
+    void testComplete() throws InterruptedException {
         DummyMS m1 = new DummyMS("solo");
-        AttackEvent ev1 =  new AttackEvent();
+        ExampleEvent ev1 = new ExampleEvent();
         m1.initialize();
-        bus.awaitMessage(m1);
+        DummyMS m2 = new DummyMS("luke");
+        Future<Boolean> result = m2.sendEvent(ev1);
+        m2.complete(ev1, result.get());
+        assertTrue(result.isDone());
+        assertNotEquals(null, result.get());
+
     }
 
     @Test
     void testSendBroadcast() throws InterruptedException {
         DummyMS m1 = new DummyMS("solo");
         DummyMS m2 = new DummyMS("han");
-        TerminateBroadcast broad = new TerminateBroadcast();
-        bus.sendBroadcast(broad);
+        DummyMS m3 = new DummyMS("yoda");
+        Broadcast broad = new ExampleBroadcast();
         m1.initialize();
         m2.initialize();
-        bus.awaitMessage(m1);
-        bus.awaitMessage(m2); // assuming there is  a message in the queue according to forum
-        assertEquals(m1.getNum(), 2);
-        assertEquals(m2.getNum(), 2);
-
+        m3.sendBroadcast(broad);
+        Message bro1 = bus.awaitMessage(m1);
+        Message bro2 = bus.awaitMessage(m2);
+        assertEquals(broad, bro1);
+        assertEquals(broad, bro2);
     }
 
     @Test
     void testSendEvent() throws InterruptedException {
 
         DummyMS m1 = new DummyMS("han");
-        DummyMS m2 = new DummyMS("solo");
-        AttackEvent ev1 =  new AttackEvent();
-        AttackEvent ev2 =  new AttackEvent();
+        ExampleEvent ev1 = new ExampleEvent();
         m1.initialize();
-        m2.initialize();
-        Future<Boolean> res1=bus.sendEvent(ev1);
-        Future<Boolean> res2=bus.sendEvent(ev2);
-        bus.awaitMessage(m1);
-        bus.awaitMessage(m2);
-        Boolean result1=res1.get();
-        Boolean result2=res2.get();
-        assertTrue(result1);
-        assertTrue(result2);
-        assertEquals(m1.getNum(), 3);
-        assertEquals(m2.getNum(), 3);
+        DummyMS m2 = new DummyMS("han");
+        m2.sendEvent(ev1);
+        Message ev2 = bus.awaitMessage(m1);
+        assertEquals(ev1, ev2);
     }
 
     @Test
@@ -107,13 +105,14 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testAwaitMessage() { // todo
-
+    void testAwaitMessage() throws InterruptedException { // todo
+        DummyMS m1 = new DummyMS("han");
+        ExampleEvent ev1 = new ExampleEvent();
+        m1.initialize();
+        DummyMS m2 = new DummyMS("han");
+        m2.sendEvent(ev1);
+        Message ev2 = bus.awaitMessage(m1);
+        assertEquals(ev1, ev2);
     }
 
-
-    @Test
-    void testGetInstance() { //todo: check
-        assertEquals(bus.getClass(),MessageBusImpl.class.getClass());
-    }
 }

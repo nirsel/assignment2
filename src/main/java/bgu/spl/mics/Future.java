@@ -66,7 +66,7 @@ public class Future<T> {
 		if (isDone)
 			return result;
 		while(result==null){
-			unit.sleep(timeout);
+			unit.wait(timeout);
 		}
 		return  result;
 	}
