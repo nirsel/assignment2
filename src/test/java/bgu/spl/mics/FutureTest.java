@@ -22,8 +22,7 @@ public class FutureTest {
     }
 
     @Test
-    public void testGet()
-    {
+    public void testGet()  {
         assertFalse(future.isDone());
         future.resolve("");
         future.get();
@@ -47,7 +46,7 @@ public class FutureTest {
     }
 
     @Test
-    public void testGetWithTimeOut() throws InterruptedException
+    public void testGetWithTimeOut()
     {
         assertFalse(future.isDone());
         future.get(100,TimeUnit.MILLISECONDS);

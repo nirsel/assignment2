@@ -14,7 +14,7 @@ class EwokTest {
     }
 
     @AfterEach
-    void tearDown() { //todo: check if needed
+    void tearDown() {
     }
 
     @Test

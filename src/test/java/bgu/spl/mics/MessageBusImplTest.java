@@ -1,20 +1,11 @@
 package bgu.spl.mics;
 
-import bgu.spl.mics.application.AttackEventCallback;
-import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.ExampleBroadcast;
 import bgu.spl.mics.application.messages.ExampleEvent;
-import bgu.spl.mics.application.messages.TerminateBroadcast;
-import bgu.spl.mics.application.passiveObjects.Attack;
 import bgu.spl.mics.application.services.DummyMS;
-import bgu.spl.mics.application.services.HanSoloMicroservice;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Vector;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.junit.jupiter.api.Assertions.*;
 

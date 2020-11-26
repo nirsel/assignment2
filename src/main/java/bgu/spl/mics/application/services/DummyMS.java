@@ -8,7 +8,6 @@ import bgu.spl.mics.application.messages.TerminateBroadcast;
 
 public class DummyMS extends MicroService {
 
-    protected static Integer num=0; // todo: check
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -18,11 +17,6 @@ public class DummyMS extends MicroService {
         super(name);
     }
 
-    public Integer getNum() {
-        return num;
-    }
-
-
     @Override
     public void initialize() throws InterruptedException {
         MessageBusImpl bus = MessageBusImpl.getInstance();
@@ -31,21 +25,5 @@ public class DummyMS extends MicroService {
         subscribeBroadcast(ExampleBroadcast.class, (c)->{});
 
     }
-    /*
-    public static class CallbackTest implements Callback<ExampleBroadcast>{
 
-        @Override
-        public void call(ExampleBroadcast c) throws InterruptedException {
-                DummyMS.num = 2;
-                c.setFlag(true);
-        }
-    }
-
-    public static class CallbackTest2 implements Callback<AttackEvent>{
-
-        @Override
-        public void call(AttackEvent c) throws InterruptedException {
-            DummyMS.num = 3;
-        }
-    } */
 }
