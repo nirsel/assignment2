@@ -22,11 +22,14 @@ public class DummyMS extends MicroService {
 
 
     @Override
-    public void initialize() {
+    public void initialize() throws InterruptedException {
         MessageBusImpl bus = MessageBusImpl.getInstance();
         bus.register(this);
         subscribeEvent(AttackEvent.class, new DummyMS.CallbackTest2());
         subscribeBroadcast(TerminateBroadcast.class, new DummyMS.CallbackTest());
+        Message m1=bus.awaitMessage(this);
+        Message m2=bus.awaitMessage(this);
+
     }
 
     public static class CallbackTest implements Callback<TerminateBroadcast>{

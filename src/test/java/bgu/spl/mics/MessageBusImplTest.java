@@ -80,10 +80,10 @@ class MessageBusImplTest {
         DummyMS m2 = new DummyMS("solo");
         AttackEvent ev1 =  new AttackEvent();
         AttackEvent ev2 =  new AttackEvent();
-        bus.sendEvent(ev1);
-        bus.sendEvent(ev2);
         m1.initialize();
         m2.initialize();
+        Future<Boolean> res1=bus.sendEvent(ev1);
+        Future<Boolean> res2=bus.sendEvent(ev2);
         bus.awaitMessage(m1);
         bus.awaitMessage(m2);
         assertEquals(m1.getNum(), 3);
