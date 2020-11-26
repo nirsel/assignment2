@@ -4,11 +4,14 @@ import bgu.spl.mics.Future;
 import bgu.spl.mics.application.passiveObjects.Attack;
 
 public class AttackEvent implements Event<Boolean> {
-	private Future<Boolean> result;
+	private Future<Boolean> result=new Future<Boolean>();
 
-	@Override
-	public void setResult(Future<Boolean> result) {
-		this.result = result;
+	public void setResult() {
+		 result.resolve(true);
+	}
+
+	public Future<Boolean> getResult(){
+		return result;
 	}
 
 }

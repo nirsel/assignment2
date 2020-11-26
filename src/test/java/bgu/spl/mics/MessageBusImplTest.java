@@ -1,5 +1,7 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.AttackEventCallback;
+import bgu.spl.mics.application.FutureCallback;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Attack;
@@ -31,7 +33,7 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testSubscribeEvent() throws InterruptedException {
+    void testSubscribeEvent() throws InterruptedException { //maybe not necessary
         /*
         Create new microservice, register him to event
         check if he is subscribed
@@ -42,6 +44,7 @@ class MessageBusImplTest {
         bus.subscribeEvent(ev.getClass(),m1);
         bus.sendEvent(ev);
         bus.awaitMessage(m1);
+        assertTrue(ev.getResult().isDone()); //right???
         //check if m1 got the event somehow
 
     }
@@ -91,13 +94,17 @@ class MessageBusImplTest {
         MicroService m2 = new HanSoloMicroservice();
         bus.register(m1);
         bus.register(m2);
-        AttackEvent ev =  new AttackEvent();
-        m1.subscribeEvent(ev.getClass(), (c) -> {System.out.println("hey, event test1");});
-        m2.subscribeEvent(ev.getClass(), (c) -> {System.out.println("hey, event test2");});
-        bus.sendEvent(ev);
-        bus.sendEvent(ev);
+        AttackEvent ev1 =  new AttackEvent();
+        AttackEvent ev2 =  new AttackEvent();
+        Callback<AttackEvent> func = new AttackEventCallback();
+        m1.subscribeEvent(AttackEvent.class, func);
+        m2.subscribeEvent(AttackEvent.class, func);
+        bus.sendEvent(ev1);
+        bus.sendEvent(ev2);
         bus.awaitMessage(m1);
         bus.awaitMessage(m2);
+        assertTrue(ev1.getResult().isDone());
+        assertTrue(ev2.getResult().isDone());
     }
 
     @Test
