@@ -71,6 +71,7 @@ class MessageBusImplTest {
         bus.awaitMessage(m2); // assuming there is  a message in the queue according to forum
         assertEquals(m1.getNum(), 2);
         assertEquals(m2.getNum(), 2);
+
     }
 
     @Test
@@ -86,6 +87,10 @@ class MessageBusImplTest {
         Future<Boolean> res2=bus.sendEvent(ev2);
         bus.awaitMessage(m1);
         bus.awaitMessage(m2);
+        Boolean result1=res1.get();
+        Boolean result2=res2.get();
+        assertTrue(result1);
+        assertTrue(result2);
         assertEquals(m1.getNum(), 3);
         assertEquals(m2.getNum(), 3);
     }
