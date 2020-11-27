@@ -59,9 +59,9 @@ class MessageBusImplTest {
         DummyMS m2 = new DummyMS("luke");
         ExampleEvent ev1 = new ExampleEvent();
         m1.initialize(); //register m1 to MessageBus and subscribe him to ExampleEvent
-        Future<Boolean> f =m2.sendEvent(ev1);
-        m1.complete(ev1,true);
-        assertTrue(f.isDone());
+        Future<Boolean> f =m2.sendEvent(ev1); //m2 sends the event ev1, f holds the future object of that event from the resultMap
+        m1.complete(ev1,true); // awaitMessage is not needed here because the callback function does nothing in the example
+        assertTrue(f.isDone()); //we expect the event to be resolved
         assertEquals(true,f.get());
 
 

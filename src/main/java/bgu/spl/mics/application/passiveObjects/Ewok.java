@@ -27,7 +27,7 @@ public class Ewok {
      * release an Ewok
      */
     public void release() {
-        available=false;
+        available=true;
     }
 
     public boolean isAvailable(){

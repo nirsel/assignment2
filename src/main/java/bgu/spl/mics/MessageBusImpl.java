@@ -13,11 +13,17 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
 	private Vector<ConcurrentLinkedQueue<MicroService>> subscribeQueue;
 	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> messageMap;
+	private ConcurrentHashMap<Class<? extends Event>, Future> resultMap;
 	private static class MessageBusImplHolder {
 		private static MessageBusImpl instance=new MessageBusImpl();
 	}
 
-	private MessageBusImpl(){ //todo:constructor
+	private MessageBusImpl(){
+		messageQueues=new Vector<ConcurrentLinkedQueue<Message>>();
+		microServiceMap = new ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>>();
+		subscribeQueue = new Vector<ConcurrentLinkedQueue<MicroService>>();
+		messageMap = new ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>>();
+		resultMap = new ConcurrentHashMap<Class<? extends Event>, Future>();
 
 	}
 
@@ -38,7 +44,8 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		
+		Future<T> promisedResult= resultMap.get(e);
+		promisedResult.resolve(result);
 	}
 
 	@Override

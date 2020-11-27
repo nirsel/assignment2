@@ -18,7 +18,7 @@ public class DummyMS extends MicroService {
     }
 
     @Override
-    public void initialize() throws InterruptedException {
+    public void initialize()  {
         MessageBusImpl bus = MessageBusImpl.getInstance();
         bus.register(this);
         subscribeEvent(ExampleEvent.class, (c)->{});
