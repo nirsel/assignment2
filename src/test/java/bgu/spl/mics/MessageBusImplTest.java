@@ -80,9 +80,8 @@ class MessageBusImplTest {
         m1.initialize();
         m2.initialize(); //register both MS to MessageBus and subscribes them to ExampleBroadcast
         m3.sendBroadcast(broad); //m3 sends ExampleBroadcast
-            Message bro1 = bus.awaitMessage(m1);
-            Message bro2 = bus.awaitMessage(m2);
-
+        Message bro1 = bus.awaitMessage(m1);
+        Message bro2 = bus.awaitMessage(m2);
         assertEquals(broad, bro1); //we expect both microservices to get the broadcast from m3
         assertEquals(broad, bro2);
     }

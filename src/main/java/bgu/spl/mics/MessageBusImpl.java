@@ -34,12 +34,28 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		
+		if (messageMap.containsKey(type)){
+			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type);
+			queue.add(m);
+		}
+		else {
+			ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>();
+			subscribeQueue.add(newQueue);
+			newQueue.add(m);
+		}
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		
+		if (messageMap.containsKey(type)){
+			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type);
+			queue.add(m);
+		}
+		else {
+			ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>();
+			subscribeQueue.add(newQueue);
+			newQueue.add(m);
+		}
     }
 
 	@Override @SuppressWarnings("unchecked")
@@ -50,7 +66,13 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		
+		if (messageMap.containsKey(b)){
+			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(b);
+			for (MicroService m : queue){
+				ConcurrentLinkedQueue<Message> mesQueue=microServiceMap.get(m);
+				mesQueue.add(b);
+			}
+		}
 	}
 
 	
@@ -72,6 +94,9 @@ public class MessageBusImpl implements MessageBus {
 		ConcurrentLinkedQueue<Message> queue=microServiceMap.get(m);
 		messageQueues.remove(queue);
 		microServiceMap.remove(m);
+		for (ConcurrentLinkedQueue<MicroService> subQueue: subscribeQueue){
+			subQueue.remove(m);
+		}
 	}
 
 	@Override
@@ -80,8 +105,4 @@ public class MessageBusImpl implements MessageBus {
 		return null;
 	}
 
-	private boolean isSubscribed(Class<? extends Message> type, MicroService m){
-		ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type);
-		return queue.contains(m);
-	}
 }
