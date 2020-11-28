@@ -60,7 +60,7 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testSendBroadcast() throws InterruptedException {
+    void testSendBroadcast() {
         DummyMS m1 = new DummyMS("solo");
         DummyMS m2 = new DummyMS("han");
         DummyMS m3 = new DummyMS("yoda");
@@ -68,21 +68,31 @@ class MessageBusImplTest {
         m1.initialize();
         m2.initialize(); //register both MS to MessageBus and subscribes them to ExampleBroadcast
         m3.sendBroadcast(broad); //m3 sends ExampleBroadcast
-        Message bro1 = bus.awaitMessage(m1);
-        Message bro2 = bus.awaitMessage(m2);
+        Message bro1=new ExampleBroadcast();
+        Message bro2=new ExampleBroadcast();
+        try {
+            bro1 = bus.awaitMessage(m1);
+            bro2 = bus.awaitMessage(m2);
+        } catch(InterruptedException interrupt){fail();}
+
         assertEquals(broad, bro1); //we expect both microservices to get the broadcast from m3
         assertEquals(broad, bro2);
     }
 
     @Test
-    void testSendEvent() throws InterruptedException {
+    void testSendEvent() {
 
         DummyMS m1 = new DummyMS("han");
         ExampleEvent ev1 = new ExampleEvent();
         m1.initialize(); //register m1 to MessageBus and subscribe him to ExampleEvent
         DummyMS m2 = new DummyMS("han");
         m2.sendEvent(ev1); //m2 sends ExampleEvent
-        Message ev2 = bus.awaitMessage(m1); //expect m1 to get ev1
+        Message ev2= new ExampleEvent();
+        try{
+            ev2 = bus.awaitMessage(m1); //expect m1 to get ev1
+        }
+        catch(InterruptedException interrupt){fail();}
+
         assertEquals(ev1, ev2); //expect ev2 to be equal to ev1
     }
 
@@ -98,13 +108,16 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testAwaitMessage() throws InterruptedException {
+    void testAwaitMessage()  {
         DummyMS m1 = new DummyMS("han");
         ExampleEvent ev1 = new ExampleEvent();
         m1.initialize(); //register m1 to MessageBus and subscribe him to ExampleEvent
         DummyMS m2 = new DummyMS("han");
         m2.sendEvent(ev1); //m2 sends ExampleEvent
-        Message ev2 = bus.awaitMessage(m1); //m1 should get ev1
+        Message ev2= new ExampleEvent();
+        try {
+            ev2 = bus.awaitMessage(m1); //m1 should get ev1
+        } catch (InterruptedException interrupt){fail();}
         assertEquals(ev1, ev2); //expect ev1 and ev2 to be equals, meaning that m1 got the message using await message
     }
 

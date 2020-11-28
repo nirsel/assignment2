@@ -33,12 +33,12 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		if (messageMap.containsKey(type)){ // if this type of event already exist
+		if (messageMap.containsKey(type)){ // if this type of event already exists
 			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type); 
 			queue.add(m); // add m to this event queue
 		}
 		else { // this type of event doesn't exist
-			ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>(); // creats a new queue for this type
+			ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>(); // create a new queue for this type
 			newQueue.add(m);
 			messageMap.put(type,newQueue); // add the type and its queue to the map
 		}
@@ -46,20 +46,20 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		if (messageMap.containsKey(type)){
+		if (messageMap.containsKey(type)){ // if this type of broadcast already exists
 			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type);
 			queue.add(m);
 		}
-		else {
+		else { // this type of broadcast doesn't exist
 			ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>();
 			newQueue.add(m);
-			messageMap.put(type,newQueue);
+			messageMap.put(type,newQueue); // add the type and its queue to the map
 		}
     }
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		Future<T> promisedResult= resultMap.get(e);
+		Future<T> promisedResult= resultMap.get(e); // retrieve the promised result assosiated with the event
 		promisedResult.resolve(result);
 	}
 
@@ -106,7 +106,7 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public Message awaitMessage(MicroService m) {
+	public Message awaitMessage(MicroService m) throws InterruptedException{
 		ConcurrentLinkedQueue<Message> messageQueue=microServiceMap.get(m);
 		if (!messageQueue.isEmpty()) {
 			Message message = messageQueue.poll();
