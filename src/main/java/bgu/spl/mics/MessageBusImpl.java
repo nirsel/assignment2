@@ -1,6 +1,7 @@
 package bgu.spl.mics;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -34,7 +35,7 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		if (messageMap.containsKey(type)){
+		if (messageMap.containsKey(type.getClass())){
 			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type);
 			queue.add(m);
 		}
@@ -42,12 +43,13 @@ public class MessageBusImpl implements MessageBus {
 			ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>();
 			subscribeQueue.add(newQueue);
 			newQueue.add(m);
+			messageMap.put(type,newQueue);
 		}
 	}
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		if (messageMap.containsKey(type)){
+		if (messageMap.containsKey(type.getClass())){
 			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type);
 			queue.add(m);
 		}
@@ -55,6 +57,7 @@ public class MessageBusImpl implements MessageBus {
 			ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>();
 			subscribeQueue.add(newQueue);
 			newQueue.add(m);
+			messageMap.put(type,newQueue);
 		}
     }
 
@@ -66,7 +69,7 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		if (messageMap.containsKey(b)){
+		if (messageMap.containsKey(b.getClass())){
 			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(b);
 			for (MicroService m : queue){
 				ConcurrentLinkedQueue<Message> mesQueue=microServiceMap.get(m);
@@ -78,7 +81,15 @@ public class MessageBusImpl implements MessageBus {
 	
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
-		
+		if (messageMap.containsKey(e.getClass())) {
+			ConcurrentLinkedQueue<MicroService> msQueue = messageMap.get(e);
+			MicroService ms = msQueue.poll();
+			msQueue.add(ms); //round robin - removes the first and adds him to the tail of the queue
+			ConcurrentLinkedQueue<Message> mesQueue = microServiceMap.get(ms);
+			mesQueue.add(e);
+			Future<T> result= new Future<T>(); //?
+			return  result;
+		}
         return null;
 	}
 
