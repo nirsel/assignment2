@@ -45,15 +45,7 @@ class MessageBusImplTest {
 
     @Test
     void testComplete()  {
-        /*DummyMS m1 = new DummyMS("solo");
-        ExampleEvent ev1 = new ExampleEvent();
-        m1.initialize(); //register m1 to MessageBus and subscribe him to ExampleEvent
-        DummyMS m2 = new DummyMS("luke");
-        Future<Boolean> result = m2.sendEvent(ev1); //m2 sends the event ev1, result holds the future object of that event
-        m1.complete(ev1, result.get()); //m1's complete calls MessageBus's complete with the promised result
-        assertTrue(result.isDone()); //we expect the event to be resolved
-        assertNotEquals(null, result.get()); //we expect the result to be a value different from null
-       */
+
 
         DummyMS m1 = new DummyMS("solo");
         DummyMS m2 = new DummyMS("luke");
@@ -63,10 +55,6 @@ class MessageBusImplTest {
         m1.complete(ev1,true); // awaitMessage is not needed here because the callback function does nothing in the example
         assertTrue(f.isDone()); //we expect the event to be resolved
         assertEquals(true,f.get());
-
-
-
-
 
 
     }
