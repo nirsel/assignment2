@@ -58,8 +58,10 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-    	callbackMap.put(type,callback);
-    	bus.subscribeEvent(type,this);
+        if (!callbackMap.containsKey(type)){
+            callbackMap.put(type,callback);
+            bus.subscribeEvent(type,this);
+        }
     }
 
     /**
@@ -83,8 +85,10 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-    	callbackMap.put(type,callback);
-    	bus.subscribeBroadcast(type,this);
+    	if (!callbackMap.containsKey(type)) {
+            callbackMap.put(type, callback);
+            bus.subscribeBroadcast(type, this);
+        }
     }
 
     /**
@@ -101,8 +105,8 @@ public abstract class MicroService implements Runnable {
      */
 
     protected final <T> Future<T> sendEvent(Event<T> e) {
-    	
-        return null; 
+    	Future<T> result=bus.sendEvent(e);
+        return result;
     }
 
     /**
@@ -112,7 +116,7 @@ public abstract class MicroService implements Runnable {
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
-    	
+    	bus.sendBroadcast(b);
     }
 
     /**
@@ -138,8 +142,9 @@ public abstract class MicroService implements Runnable {
      * Signals the event loop that it must terminate after handling the current
      * message.
      */
-    protected final void terminate() {
-    	
+    protected final void terminate() { //todo: check
+        bus.unregister(this);
+        terminate();
     }
 
     /**
@@ -147,7 +152,7 @@ public abstract class MicroService implements Runnable {
      *         construction time and is used mainly for debugging purposes.
      */
     public final String getName() {
-        return null;
+        return name;
     }
 
     /**

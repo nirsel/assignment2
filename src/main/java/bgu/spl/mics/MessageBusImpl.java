@@ -10,21 +10,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class MessageBusImpl implements MessageBus {
 
-	private Vector<ConcurrentLinkedQueue<Message>> messageQueues;
+
 	private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
-	private Vector<ConcurrentLinkedQueue<MicroService>> subscribeQueue;
 	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> messageMap;
-	private ConcurrentHashMap<Class<? extends Event>, Future> resultMap;
+	private ConcurrentHashMap<Event, Future> resultMap;
+
 	private static class MessageBusImplHolder {
 		private static MessageBusImpl instance=new MessageBusImpl();
 	}
 
 	private MessageBusImpl(){
-		messageQueues=new Vector<ConcurrentLinkedQueue<Message>>();
 		microServiceMap = new ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>>();
-		subscribeQueue = new Vector<ConcurrentLinkedQueue<MicroService>>();
 		messageMap = new ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>>();
-		resultMap = new ConcurrentHashMap<Class<? extends Event>, Future>();
+		resultMap = new ConcurrentHashMap<Event, Future>();
 
 	}
 
@@ -41,7 +39,6 @@ public class MessageBusImpl implements MessageBus {
 		}
 		else {
 			ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>();
-			subscribeQueue.add(newQueue);
 			newQueue.add(m);
 			messageMap.put(type,newQueue);
 		}
@@ -55,7 +52,6 @@ public class MessageBusImpl implements MessageBus {
 		}
 		else {
 			ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>();
-			subscribeQueue.add(newQueue);
 			newQueue.add(m);
 			messageMap.put(type,newQueue);
 		}
@@ -69,8 +65,8 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		if (messageMap.containsKey(b)){
-			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(b);
+		if (messageMap.containsKey(b.getClass())){
+			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(b.getClass());
 			for (MicroService m : queue){
 				ConcurrentLinkedQueue<Message> mesQueue=microServiceMap.get(m);
 				mesQueue.add(b);
@@ -81,13 +77,14 @@ public class MessageBusImpl implements MessageBus {
 	
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
-		if (messageMap.containsKey(e)) {
-			ConcurrentLinkedQueue<MicroService> microQueue = messageMap.get(e);
+		if (messageMap.containsKey(e.getClass())) {
+			ConcurrentLinkedQueue<MicroService> microQueue = messageMap.get(e.getClass());
 			MicroService ms = microQueue.poll();
 			microQueue.add(ms); //round robin - removes the first and adds him to the tail of the queue
 			ConcurrentLinkedQueue<Message> messageQueue = microServiceMap.get(ms);
 			messageQueue.add(e);
-			Future<T> result= new Future<T>(); //?
+			Future<T> result= new Future<T>();
+			resultMap.put(e,result);
 			return  result;
 		}
         return null;
@@ -97,24 +94,25 @@ public class MessageBusImpl implements MessageBus {
 	public void register(MicroService m) {
 		ConcurrentLinkedQueue<Message> newQueue=new ConcurrentLinkedQueue<Message>();
 		microServiceMap.put(m,newQueue);
-		messageQueues.add(newQueue);
 	}
 
 	@Override
 	public void unregister(MicroService m) {
 		if (microServiceMap.containsKey(m)) {
 			ConcurrentLinkedQueue<Message> queue = microServiceMap.get(m);
-			messageQueues.remove(queue);
 			microServiceMap.remove(m);
-			for (ConcurrentLinkedQueue<MicroService> subQueue : subscribeQueue) {
-				subQueue.remove(m);
-			}
+			messageMap.forEach((key,value)-> value.remove(m)); //removes m from every subscription he had
 		}
 	}
 
 	@Override
-	public Message awaitMessage(MicroService m) throws InterruptedException {
-		
+	public Message awaitMessage(MicroService m) {
+		ConcurrentLinkedQueue<Message> messageQueue=microServiceMap.get(m);
+		if (!messageQueue.isEmpty()) {
+			Message message = messageQueue.poll();
+			return message;
+		}
+		//todo: check how to block until he has message
 		return null;
 	}
 
