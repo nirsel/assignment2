@@ -23,4 +23,9 @@ public class Ewoks {
             //todo: complete if the ewok is not available
         }
     }
+
+    public static void releaseEwoks(List<Integer> resources){
+        for (Integer num:resources)
+            ewokList.get(num).release();
+    }
 }

@@ -35,7 +35,7 @@ public class HanSoloMicroservice extends MicroService {
             Attack info=event.getInfo();
             List<Integer> resources=info.getSerials();
             Ewoks.getEwoks(resources);
-            Thread.sleep(info.getDuration());
+            Thread.currentThread().sleep(info.getDuration());
         });
 
 
