@@ -1,5 +1,8 @@
 package bgu.spl.mics.application.services;
 import java.util.List;
+
+import bgu.spl.mics.MessageBus;
+import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
@@ -20,10 +23,18 @@ public class C3POMicroservice extends MicroService {
 	
     public C3POMicroservice() {
         super("C3PO");
+        initialize();
     }
 
     @Override
     protected void initialize() {
-
+        MessageBus bus= MessageBusImpl.getInstance();
+        bus.register(this);
+        subscribeEvent(AttackEvent.class,(event)->{
+            Attack info=event.getInfo();
+            List<Integer> resources=info.getSerials();
+            Ewoks.getEwoks(resources);
+            Thread.sleep(info.getDuration());
+        });
     }
 }

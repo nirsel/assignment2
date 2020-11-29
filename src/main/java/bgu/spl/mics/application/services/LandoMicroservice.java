@@ -1,6 +1,8 @@
 package bgu.spl.mics.application.services;
 
 
+import bgu.spl.mics.MessageBus;
+import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
@@ -21,6 +23,12 @@ public class LandoMicroservice  extends MicroService {
 
     @Override
     protected void initialize() {
+        MessageBus bus= MessageBusImpl.getInstance();
+        bus.register(this);
+        subscribeEvent(BombDestroyerEvent.class,(event)->{
+            Thread.sleep(duration);
+            sendBroadcast(new TerminateBroadcast());
+        });
        
     }
 }

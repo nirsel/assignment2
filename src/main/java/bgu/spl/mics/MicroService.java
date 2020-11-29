@@ -160,8 +160,9 @@ public abstract class MicroService implements Runnable {
      * otherwise you will end up in an infinite loop.
      */
     @Override
-    public final void run() {
-    	
+    public final void run(){
+
+
     }
 
 }

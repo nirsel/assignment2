@@ -3,6 +3,13 @@ import bgu.spl.mics.Event;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.application.passiveObjects.Attack;
 
-public class AttackEvent implements Event<Boolean> {
+public class AttackEvent implements Event<Attack> {
+    private Attack info;
+
+    public AttackEvent(Attack info){
+        this.info=info;
+    }
+
+    public Attack getInfo(){return info;}
 
 }

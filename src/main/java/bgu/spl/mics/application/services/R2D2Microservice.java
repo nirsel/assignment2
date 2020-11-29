@@ -27,6 +27,7 @@ public class R2D2Microservice extends MicroService {
     protected void initialize() { //todo:complete
         MessageBus bus= MessageBusImpl.getInstance();
         bus.register(this);
+        subscribeEvent(DeactivationEvent.class,(Callback)->{Thread.currentThread().sleep(duration);});
 
     }
 }
