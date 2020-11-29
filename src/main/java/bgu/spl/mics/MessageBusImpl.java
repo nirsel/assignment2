@@ -61,7 +61,7 @@ public class MessageBusImpl implements MessageBus {
 	public <T> void complete(Event<T> e, T result) {
 		Future<T> promisedResult= resultMap.get(e); // retrieve the promised result assosiated with the event
 		promisedResult.resolve(result);
-		promisedResult.notifyAll(); //???
+
 	}
 
 	@Override
@@ -113,9 +113,7 @@ public class MessageBusImpl implements MessageBus {
 			Message message = messageQueue.poll();
 			return message;
 		}
-		else {
-			wait();
-		}
+
 		//todo: check how to block until he has message
 		return null;
 	}
