@@ -108,6 +108,8 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public Message awaitMessage(MicroService m) throws InterruptedException{
+		if (!microServiceMap.containsKey(m))
+			throw new IllegalStateException();
 		ConcurrentLinkedQueue<Message> messageQueue=microServiceMap.get(m);
 		if (!messageQueue.isEmpty()) {
 			Message message = messageQueue.poll();
