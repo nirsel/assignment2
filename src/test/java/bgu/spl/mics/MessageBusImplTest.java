@@ -100,7 +100,7 @@ class MessageBusImplTest {
         }
         catch(InterruptedException interrupt){fail();}
         boolean result=(ev1.equals(ev2));
-        assertTrue(ev1.equals(ev2)); //expect ev2 to be equal to ev1
+        assertEquals(ev2, ev1); //expect ev2 to be equal to ev1
     }
 
     @Test
@@ -125,7 +125,7 @@ class MessageBusImplTest {
         try {
             ev2 = bus.awaitMessage(m1); //m1 should get ev1
         } catch (InterruptedException interrupt){fail();}
-        assertTrue(ev1.equals(ev2)); //expect ev1 and ev2 to be equals, meaning that m1 got the message using await message
+        assertEquals(ev2, ev1); //expect ev1 and ev2 to be equals, meaning that m1 got the message using await message
     }
 
 }

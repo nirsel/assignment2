@@ -44,9 +44,10 @@ public class Future<T> {
 	/**
      * Resolves the result of this Future object.
      */
-	public void resolve (T result) {
+	public void resolve (T result) { //should be synchronized
 		this.result=result;
 		isDone=true;
+		//should be notifyALl
 	}
 	
 	/**
@@ -68,7 +69,7 @@ public class Future<T> {
      *         elapsed, return null.
      */
 	public T get(long timeout, TimeUnit unit)  {
-		if (result==null){
+		while (result==null){
 			try {
 				unit.sleep(timeout);
 				return result;

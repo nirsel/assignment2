@@ -33,7 +33,7 @@ public class C3POMicroservice extends MicroService {
         subscribeEvent(AttackEvent.class,(event)->{
             Attack info=event.getInfo();
             List<Integer> resources=info.getSerials();
-            Ewoks.getEwoks(resources);
+
             Thread.sleep(info.getDuration());
         });
     }
