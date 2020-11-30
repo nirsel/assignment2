@@ -13,7 +13,7 @@ public class MessageBusImpl implements MessageBus {
 
 	private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
 	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> messageMap;
-	private ConcurrentHashMap<Event, Future> resultMap;
+	private ConcurrentHashMap<Event, Future> resultMap; //concurrent?
 
 	private static class MessageBusImplHolder {
 		private static MessageBusImpl instance=new MessageBusImpl();
@@ -59,7 +59,7 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		Future<T> promisedResult= resultMap.get(e); // retrieve the promised result assosiated with the event
+		Future<T> promisedResult= resultMap.get(e); // retrieve the promised result associated with the event
 		promisedResult.resolve(result);
 
 	}
@@ -93,8 +93,10 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void register(MicroService m) {
-		ConcurrentLinkedQueue<Message> newQueue=new ConcurrentLinkedQueue<Message>();
-		microServiceMap.put(m,newQueue);
+		if (!microServiceMap.containsKey(m)) {
+			ConcurrentLinkedQueue<Message> newQueue = new ConcurrentLinkedQueue<Message>();
+			microServiceMap.put(m, newQueue);
+		}
 	}
 
 	@Override
@@ -112,8 +114,7 @@ public class MessageBusImpl implements MessageBus {
 			throw new IllegalStateException();
 		ConcurrentLinkedQueue<Message> messageQueue=microServiceMap.get(m);
 		if (!messageQueue.isEmpty()) {
-			Message message = messageQueue.poll();
-			return message;
+			return messageQueue.poll();
 		}
 
 		//todo: check how to block until he has message
