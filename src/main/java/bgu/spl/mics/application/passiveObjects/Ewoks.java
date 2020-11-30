@@ -25,12 +25,13 @@ public class Ewoks {
     public static Ewoks getInstance(){
         return EwoksHolder.instance;
     }
+
     public synchronized void getEwoks(List<Integer> resources){
         for (Integer num:resources){
             if (ewokList.get(num).isAvailable())
                 ewokList.get(num).acquire();
             else {
-                try {wait();}//todo: complete if the ewok is not available
+                try {wait();}//todo: complete if the ewok is not available - maybe to sort the resources list to avoid deadlock
                 catch (InterruptedException e){
                     getEwoks(resources);
                 }

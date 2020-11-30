@@ -23,7 +23,6 @@ public class C3POMicroservice extends MicroService {
 	
     public C3POMicroservice() {
         super("C3PO");
-        initialize();
     }
 
     @Override

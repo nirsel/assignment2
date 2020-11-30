@@ -65,19 +65,20 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public void sendBroadcast(Broadcast b) {
+	public synchronized void sendBroadcast(Broadcast b) {
 		if (messageMap.containsKey(b.getClass())){
 			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(b.getClass());
 			for (MicroService m : queue){
 				ConcurrentLinkedQueue<Message> mesQueue=microServiceMap.get(m);
 				mesQueue.add(b);
 			}
+			notifyAll();
 		}
 	}
 
 	
 	@Override
-	public <T> Future<T> sendEvent(Event<T> e) {
+	public synchronized <T> Future<T> sendEvent(Event<T> e) {
 		if (messageMap.containsKey(e.getClass())) {
 			ConcurrentLinkedQueue<MicroService> microQueue = messageMap.get(e.getClass());
 			MicroService ms = microQueue.poll();
@@ -86,6 +87,7 @@ public class MessageBusImpl implements MessageBus {
 			messageQueue.add(e);
 			Future<T> result= new Future<T>();
 			resultMap.put(e,result);
+			notifyAll();
 			return  result;
 		}
         return null;
@@ -109,16 +111,22 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public Message awaitMessage(MicroService m) throws InterruptedException{
+	public synchronized Message awaitMessage(MicroService m) throws InterruptedException{
 		if (!microServiceMap.containsKey(m))
 			throw new IllegalStateException();
 		ConcurrentLinkedQueue<Message> messageQueue=microServiceMap.get(m);
 		if (!messageQueue.isEmpty()) {
 			return messageQueue.poll();
 		}
+		else {
+			while (messageQueue.isEmpty()){
+				try {wait();}
+				catch (InterruptedException e){}
+			}
+		}
 
 		//todo: check how to block until he has message
-		return null;
+		return messageQueue.poll();
 	}
 
 }

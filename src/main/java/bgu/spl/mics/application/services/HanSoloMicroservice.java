@@ -23,7 +23,6 @@ public class HanSoloMicroservice extends MicroService {
 
     public HanSoloMicroservice() {
         super("Han");
-        initialize();
     }
 
 
