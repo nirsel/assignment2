@@ -34,7 +34,6 @@ public class LandoMicroservice  extends MicroService {
             sendBroadcast(new TerminateBroadcast());
         });
         subscribeBroadcast(TerminateBroadcast.class,(broad)-> {
-            bus.unregister(this);
             terminate();
         });
         latch.countDown();

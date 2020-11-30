@@ -22,13 +22,17 @@ import com.google.gson.GsonBuilder;
  * In the end, you should output a JSON.
  */
 public class Main {
-	public static void main(String[] args) throws InterruptedException {
-		//initialize Ewoks
-		//initialize all microservices except leia
-		//main thread waits
+	public static void main(String[] args) throws InterruptedException, IOException {
+		Input input=JsonInputReader.getInputFromJson("input.json"); //todo:check how to get input
+		Ewoks ewoks=Ewoks.getInstance();
+		ewoks.setEwoksList(input.getEwoks());
 		CountDownLatch latch=new CountDownLatch(4);
-		latch.await();
-		//initialize leia
+		new Thread(new HanSoloMicroservice(latch)).start();
+		new Thread(new C3POMicroservice((latch))).start();
+		new Thread(new R2D2Microservice(input.getR2D2(),latch)).start();
+		new Thread(new LandoMicroservice(input.getLando(),latch)).start();
+		latch.await(); //main thread waits until other microservices initialized and waiting for messages
+		new Thread(new LeiaMicroservice(input.getAttacks()));
 
 	}
 }

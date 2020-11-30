@@ -22,11 +22,11 @@ import java.util.HashMap;
  * Only private fields and methods may be added to this class.
  * <p>
  */
-public abstract class MicroService implements Runnable { 
+public abstract class MicroService implements Runnable {
     
     private String name;
     private MessageBus bus;
-    private HashMap<Class<? extends Message>,Callback<? extends Message>> callbackMap;
+    private HashMap<Class<? extends Message>,Callback> callbackMap;
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)
@@ -34,7 +34,7 @@ public abstract class MicroService implements Runnable {
     public MicroService(String name) {
     	this.name=name;
     	bus=MessageBusImpl.getInstance();
-    	callbackMap= new HashMap<Class<? extends Message>,Callback<? extends Message>>();
+    	callbackMap= new HashMap<Class<? extends Message>,Callback>();
     }
 
     /**
@@ -144,7 +144,8 @@ public abstract class MicroService implements Runnable {
      */
     protected final void terminate() { //todo: check
         bus.unregister(this);
-        terminate();
+        //how to terminate itself?
+
     }
 
     /**
@@ -166,10 +167,9 @@ public abstract class MicroService implements Runnable {
         } catch (InterruptedException e) { //todo:check
         }
         while(true){
-            Message task= null;
             try {
-                task = bus.awaitMessage(this);
-               // callbackMap.get(task.getClass()).call(task);
+                Message task = bus.awaitMessage(this);
+                callbackMap.get(task).call(task);
             } catch (InterruptedException e) {
             }
 
@@ -177,5 +177,7 @@ public abstract class MicroService implements Runnable {
         }
 
     }
+
+
 
 }

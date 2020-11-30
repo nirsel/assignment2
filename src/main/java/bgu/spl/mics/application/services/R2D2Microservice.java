@@ -36,7 +36,6 @@ public class R2D2Microservice extends MicroService {
             Thread.sleep(duration);
             sendEvent(new BombDestroyerEvent());});
         subscribeBroadcast(TerminateBroadcast.class,(broad)-> {
-            bus.unregister(this);
             terminate();
         });
         latch.countDown();

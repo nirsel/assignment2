@@ -41,7 +41,6 @@ public class HanSoloMicroservice extends MicroService {
             complete(event,true);
         });
         subscribeBroadcast(TerminateBroadcast.class,(broad)-> {
-            bus.unregister(this);
             terminate();
         });
         latch.countDown();

@@ -16,6 +16,10 @@ public class Ewok {
         available=true;
     }
 
+    public int getSerialNumber() {
+        return serialNumber;
+    }
+
     /**
      * Acquires an Ewok
      */

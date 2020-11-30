@@ -23,33 +23,39 @@ public class Ewoks {
         private static Ewoks instance=new Ewoks();
     }
 
+    public void setEwoksList(int num){
+        for (int i=1;i<=num;i++)
+            ewokList.add(new Ewok(i));
+    }
+
     public static Ewoks getInstance(){
         return EwoksHolder.instance;
     }
 
     public void acquireEwoks(List<Integer> resources){
         resources.sort(Comparator.comparingInt(o -> o)); //sorts the resources list to avoid deadlocks
-        for (Integer num:resources){
-            if (ewokList.get(num).isAvailable())
-                ewokList.get(num).acquire();
-            else {
-                    synchronized (this) {
-                        while (!ewokList.get(num).isAvailable()) {
-                            try {
-                                wait();
-                            }
-                            catch (InterruptedException e) {
-                            }
+        synchronized (this) {
+            for (Integer num : resources) {
+                if (ewokList.get(num-1).isAvailable())
+                    ewokList.get(num-1).acquire();
+                else {
 
+                    while (!ewokList.get(num-1).isAvailable()) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
                         }
+
                     }
+
+                }
             }
         }
     }
 
     public void releaseEwoks(List<Integer> resources){
         for (Integer num:resources)
-            ewokList.get(num).release();
+            ewokList.get(num-1).release();
         synchronized (this){notifyAll();}
     }
 }
