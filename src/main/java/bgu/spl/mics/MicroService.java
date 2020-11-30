@@ -1,7 +1,8 @@
 package bgu.spl.mics;
 
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+
 
 /**
  * The MicroService is an abstract class that any micro-service in the system
@@ -25,7 +26,7 @@ public abstract class MicroService implements Runnable {
     
     private String name;
     private MessageBus bus;
-    private ConcurrentHashMap<Class<? extends Message>,Callback<? extends Message>> callbackMap;
+    private HashMap<Class<? extends Message>,Callback<? extends Message>> callbackMap;
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)
@@ -33,7 +34,7 @@ public abstract class MicroService implements Runnable {
     public MicroService(String name) {
     	this.name=name;
     	bus=MessageBusImpl.getInstance();
-    	callbackMap= new ConcurrentHashMap<Class<? extends Message>,Callback<? extends Message>>();
+    	callbackMap= new HashMap<Class<? extends Message>,Callback<? extends Message>>();
     }
 
     /**
@@ -105,8 +106,7 @@ public abstract class MicroService implements Runnable {
      */
 
     protected final <T> Future<T> sendEvent(Event<T> e) {
-    	Future<T> result=bus.sendEvent(e);
-        return result;
+        return bus.sendEvent(e);
     }
 
     /**
@@ -161,7 +161,20 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run(){
+        try {
+            initialize();
+        } catch (InterruptedException e) { //todo:check
+        }
+        while(true){
+            Message task= null;
+            try {
+                task = bus.awaitMessage(this);
+               // callbackMap.get(task.getClass()).call(task);
+            } catch (InterruptedException e) {
+            }
 
+
+        }
 
     }
 

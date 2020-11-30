@@ -21,7 +21,7 @@ class MessageBusImplTest {
         m1 = new DummyMS("solo");
         m2 = new DummyMS("han");
         m3 = new DummyMS("yoda");
-        m1.initialize();
+        m1.initialize(); //registers and subscribes the microservice to exampleEvent and exampleBroadcast
         m2.initialize();
     }
 
@@ -53,53 +53,30 @@ class MessageBusImplTest {
     @Test
     void testComplete()  {
 
-
-       // DummyMS m1 = new DummyMS("solo");
-       // DummyMS m2 = new DummyMS("luke");
         ExampleEvent ev1 = new ExampleEvent();
-     //   m1.initialize(); //register m1 to MessageBus and subscribe him to ExampleEvent
         Future<Boolean> f =m2.sendEvent(ev1); //m2 sends the event ev1, f holds the future object of that event from the resultMap
-        m1.complete(ev1,true); // awaitMessage is not needed here because the callback function does nothing in the example
+        m1.complete(ev1,true); // m1 completes the event using complete of MessageBus. awaitMessage is not needed here because the callback function does nothing in the example
         assertTrue(f.isDone()); //we expect the event to be resolved
         assertEquals(true,f.get());
-
 
     }
 
     @Test
-    void testSendBroadcast() {
-       // DummyMS m1 = new DummyMS("solo");
-       // DummyMS m2 = new DummyMS("han");
-      //  DummyMS m3 = new DummyMS("yoda");
+    void testSendBroadcast() throws InterruptedException {
         Broadcast broad = new ExampleBroadcast();
-     //   m1.initialize();
-     //   m2.initialize(); //register both MS to MessageBus and subscribes them to ExampleBroadcast
-        m3.sendBroadcast(broad); //m3 sends ExampleBroadcast
-        Message bro1=new ExampleBroadcast();
-        Message bro2=new ExampleBroadcast();
-        try {
-            bro1 = bus.awaitMessage(m1);
-            bro2 = bus.awaitMessage(m2);
-        } catch(InterruptedException interrupt){fail();}
-
+        m3.sendBroadcast(broad); //m3 sends ExampleBroadcast using sendBroadcast of MessageBus
+        Message bro1 = bus.awaitMessage(m1);
+        Message bro2 = bus.awaitMessage(m2);
         assertEquals(broad, bro1); //we expect both microservices to get the broadcast from m3
         assertEquals(broad, bro2);
     }
 
     @Test
-    void testSendEvent() {
+    void testSendEvent() throws InterruptedException {
 
-     //   DummyMS m1 = new DummyMS("han");
         ExampleEvent ev1 = new ExampleEvent();
-    //    m1.initialize(); //register m1 to MessageBus and subscribe him to ExampleEvent
-    //    DummyMS m2 = new DummyMS("han");
-        m2.sendEvent(ev1); //m2 sends ExampleEvent
-        Message ev2= new ExampleEvent();
-        try{
-            ev2 = bus.awaitMessage(m1); //expect m1 to get ev1
-        }
-        catch(InterruptedException interrupt){fail();}
-        boolean result=(ev1.equals(ev2));
+        m2.sendEvent(ev1); //m2 sends ExampleEvent using sendEvent of MessageBus
+        Message ev2 = bus.awaitMessage(m1); //expect m1 to get ev1
         assertEquals(ev2, ev1); //expect ev2 to be equal to ev1
     }
 
@@ -115,16 +92,10 @@ class MessageBusImplTest {
     }
 
     @Test
-    void testAwaitMessage()  {
-      //  DummyMS m1 = new DummyMS("han");
+    void testAwaitMessage() throws InterruptedException {
         ExampleEvent ev1 = new ExampleEvent();
-     //   m1.initialize(); //register m1 to MessageBus and subscribe him to ExampleEvent
-     //   DummyMS m2 = new DummyMS("han");
-        m2.sendEvent(ev1); //m2 sends ExampleEvent
-        Message ev2= new ExampleEvent();
-        try {
-            ev2 = bus.awaitMessage(m1); //m1 should get ev1
-        } catch (InterruptedException interrupt){fail();}
+        m2.sendEvent(ev1); //m2 sends ExampleEvent using sendEvent of MessageBus
+        Message ev2 = bus.awaitMessage(m1); //m1 should get ev1
         assertEquals(ev2, ev1); //expect ev1 and ev2 to be equals, meaning that m1 got the message using await message
     }
 

@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -20,7 +22,13 @@ import com.google.gson.GsonBuilder;
  * In the end, you should output a JSON.
  */
 public class Main {
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) throws InterruptedException {
+		//initialize Ewoks
+		//initialize all microservices except leia
+		//main thread waits
+		CountDownLatch latch=new CountDownLatch(4);
+		latch.await();
+		//initialize leia
+
 	}
 }

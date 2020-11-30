@@ -96,15 +96,13 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void register(MicroService m) {
 		if (!microServiceMap.containsKey(m)) {
-			ConcurrentLinkedQueue<Message> newQueue = new ConcurrentLinkedQueue<Message>();
-			microServiceMap.put(m, newQueue);
+			microServiceMap.put(m, new ConcurrentLinkedQueue<Message>());
 		}
 	}
 
 	@Override
 	public void unregister(MicroService m) {
 		if (microServiceMap.containsKey(m)) {
-			ConcurrentLinkedQueue<Message> queue = microServiceMap.get(m);
 			microServiceMap.remove(m);
 			messageMap.forEach((key,value)-> value.remove(m)); //removes m from every subscription he had
 		}
@@ -120,11 +118,9 @@ public class MessageBusImpl implements MessageBus {
 		}
 		else {
 			while (messageQueue.isEmpty()){
-				try {wait();}
-				catch (InterruptedException e){}
+				 wait();
 			}
 		}
-
 		//todo: check how to block until he has message
 		return messageQueue.poll();
 	}

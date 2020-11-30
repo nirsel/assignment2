@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.services;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MessageBusImpl;
@@ -20,9 +21,10 @@ import bgu.spl.mics.application.passiveObjects.Ewoks;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class HanSoloMicroservice extends MicroService {
-
-    public HanSoloMicroservice() {
+    CountDownLatch latch;
+    public HanSoloMicroservice(CountDownLatch latch) {
         super("Han");
+        this.latch=latch;
     }
 
 
@@ -33,10 +35,15 @@ public class HanSoloMicroservice extends MicroService {
         subscribeEvent(AttackEvent.class,(event)->{
             Attack info=event.getInfo();
             List<Integer> resources=info.getSerials();
-
-            Thread.currentThread().sleep(info.getDuration());
+            Ewoks ewoks=Ewoks.getInstance();
+            ewoks.acquireEwoks(resources);
+            Thread.sleep(info.getDuration());
+            complete(event,true);
         });
-
-
+        subscribeBroadcast(TerminateBroadcast.class,(broad)-> {
+            bus.unregister(this);
+            terminate();
+        });
+        latch.countDown();
     }
 }
