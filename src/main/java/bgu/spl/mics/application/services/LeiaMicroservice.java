@@ -29,8 +29,6 @@ public class LeiaMicroservice extends MicroService {
 
     @Override
     protected void initialize() {
-        MessageBus bus= MessageBusImpl.getInstance();
-        bus.register(this);
         subscribeBroadcast(TerminateBroadcast.class,(event)->{terminate();});
         for (int i=0;i<attacks.length;i++){
             results[i]=sendEvent(new AttackEvent(attacks[i]));

@@ -166,6 +166,8 @@ public abstract class MicroService implements Runnable {
     @Override
     public final void run(){
         try {
+            MessageBus bus= MessageBusImpl.getInstance();
+            bus.register(this);
             initialize();
         } catch (InterruptedException e) { //todo:check
         }

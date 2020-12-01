@@ -27,8 +27,6 @@ public class LandoMicroservice  extends MicroService {
 
     @Override
     protected void initialize() {
-        MessageBus bus= MessageBusImpl.getInstance();
-        bus.register(this);
         subscribeEvent(BombDestroyerEvent.class,(event)->{
             Thread.sleep(duration); //check
             complete(event,true);

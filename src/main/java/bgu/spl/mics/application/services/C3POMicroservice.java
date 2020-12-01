@@ -30,8 +30,7 @@ public class C3POMicroservice extends MicroService {
 
     @Override
     protected void initialize() {
-        MessageBus bus= MessageBusImpl.getInstance();
-        bus.register(this);
+
         subscribeEvent(AttackEvent.class,(event)->{
             Attack info=event.getInfo();
             List<Integer> resources=info.getSerials();

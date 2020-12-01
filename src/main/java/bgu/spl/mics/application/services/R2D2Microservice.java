@@ -30,8 +30,6 @@ public class R2D2Microservice extends MicroService {
 
     @Override
     protected void initialize() { //todo:complete
-        MessageBus bus= MessageBusImpl.getInstance();
-        bus.register(this);
         subscribeEvent(DeactivationEvent.class,(event)->{
             Thread.sleep(duration);
             complete(event,true);
