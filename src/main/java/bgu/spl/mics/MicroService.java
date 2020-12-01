@@ -1,6 +1,8 @@
 package bgu.spl.mics;
 
 
+import bgu.spl.mics.application.services.LeiaMicroservice;
+
 import java.util.HashMap;
 
 
@@ -27,6 +29,7 @@ public abstract class MicroService implements Runnable {
     private String name;
     private MessageBus bus;
     private HashMap<Class<? extends Message>,Callback> callbackMap;
+
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)
@@ -144,8 +147,8 @@ public abstract class MicroService implements Runnable {
      */
     protected final void terminate() { //todo: check
         bus.unregister(this);
+        Thread.currentThread().interrupt();
         //how to terminate itself?
-
     }
 
     /**

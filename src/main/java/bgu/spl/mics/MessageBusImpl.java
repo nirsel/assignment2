@@ -1,7 +1,9 @@
 package bgu.spl.mics;
+import bgu.spl.mics.application.services.LeiaMicroservice;
+
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -13,7 +15,8 @@ public class MessageBusImpl implements MessageBus {
 
 	private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
 	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> messageMap;
-	private ConcurrentHashMap<Event, Future> resultMap; //concurrent?
+	private HashMap<Event, Future> resultMap; //concurrent?
+	private int numOfAttackEvents;
 
 	private static class MessageBusImplHolder {
 		private static MessageBusImpl instance=new MessageBusImpl();
@@ -22,7 +25,7 @@ public class MessageBusImpl implements MessageBus {
 	private MessageBusImpl(){
 		microServiceMap = new ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>>();
 		messageMap = new ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>>();
-		resultMap = new ConcurrentHashMap<Event, Future>();
+		resultMap = new HashMap<Event, Future>();
 
 	}
 
@@ -32,7 +35,7 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
+	public synchronized <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		if (messageMap.containsKey(type)){ // if this type of event already exists
 			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type); 
 			queue.add(m); // add m to this event queue
@@ -45,7 +48,7 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
+	public synchronized void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
 		if (messageMap.containsKey(type)){ // if this type of broadcast already exists
 			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type);
 			queue.add(m);
@@ -61,7 +64,6 @@ public class MessageBusImpl implements MessageBus {
 	public <T> void complete(Event<T> e, T result) {
 		Future<T> promisedResult= resultMap.get(e); // retrieve the promised result associated with the event
 		promisedResult.resolve(result);
-
 	}
 
 	@Override

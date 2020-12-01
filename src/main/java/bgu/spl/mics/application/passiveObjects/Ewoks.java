@@ -45,17 +45,17 @@ public class Ewoks {
                             wait();
                         } catch (InterruptedException e) {
                         }
-
                     }
-
+                    ewokList.get(num-1).acquire();
                 }
             }
         }
     }
 
     public void releaseEwoks(List<Integer> resources){
-        for (Integer num:resources)
+        for (Integer num:resources){
             ewokList.get(num-1).release();
-        synchronized (this){notifyAll();}
+            synchronized (this){notifyAll();}
+        }
     }
 }

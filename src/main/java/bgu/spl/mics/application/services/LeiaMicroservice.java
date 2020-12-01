@@ -19,16 +19,27 @@ import bgu.spl.mics.application.passiveObjects.Diary;
  */
 public class LeiaMicroservice extends MicroService {
 	private Attack[] attacks;
+	private Future[] results;
 	
     public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
 		this.attacks = attacks;
+		results=new Future[this.attacks.length];
     }
 
     @Override
     protected void initialize() {
         MessageBus bus= MessageBusImpl.getInstance();
         bus.register(this);
-        
+        subscribeBroadcast(TerminateBroadcast.class,(event)->{terminate();});
+        for (int i=0;i<attacks.length;i++){
+            results[i]=sendEvent(new AttackEvent(attacks[i]));
+        }
+
+        for (int i=0;i<results.length;i++){
+            results[i].get();
+        }
+        sendEvent(new DeactivationEvent());
     }
+
 }

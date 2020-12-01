@@ -32,7 +32,7 @@ public class Main {
 		new Thread(new R2D2Microservice(input.getR2D2(),latch)).start();
 		new Thread(new LandoMicroservice(input.getLando(),latch)).start();
 		latch.await(); //main thread waits until other microservices initialized and waiting for messages
-		new Thread(new LeiaMicroservice(input.getAttacks()));
+		new Thread(new LeiaMicroservice(input.getAttacks())).start();
 
 	}
 }
