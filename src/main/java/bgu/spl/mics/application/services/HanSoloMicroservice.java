@@ -39,8 +39,12 @@ public class HanSoloMicroservice extends MicroService {
             Thread.sleep(info.getDuration());
             ewoks.releaseEwoks(resources);
             complete(event,true);
+            Diary diary=Diary.getInstance();
+            diary.setHanSoloFinish(System.currentTimeMillis());
+            diary.setTotalAttacks();
         });
         subscribeBroadcast(TerminateBroadcast.class,(broad)-> {
+            Diary.getInstance().setHanSoloTerminate(System.currentTimeMillis());
             terminate();
         });
         latch.countDown();

@@ -118,15 +118,8 @@ public class MessageBusImpl implements MessageBus {
 		if (!microServiceMap.containsKey(m))
 			throw new IllegalStateException();
 		ConcurrentLinkedQueue<Message> messageQueue=microServiceMap.get(m);
-		if (!messageQueue.isEmpty()) {
-			return messageQueue.poll();
-		}
-		else {
-			while (messageQueue.isEmpty()){
-				 wait();
-			}
-		}
-		//todo: check how to block until he has message
+		while (messageQueue.isEmpty())
+			wait();
 		return messageQueue.poll();
 	}
 

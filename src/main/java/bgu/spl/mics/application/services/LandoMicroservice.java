@@ -33,6 +33,7 @@ public class LandoMicroservice  extends MicroService {
             sendBroadcast(new TerminateBroadcast());
         });
         subscribeBroadcast(TerminateBroadcast.class,(broad)-> {
+            Diary.getInstance().setLandoTerminate(System.currentTimeMillis());
             terminate();
         });
         latch.countDown();

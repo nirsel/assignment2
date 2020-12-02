@@ -21,7 +21,21 @@ public class Future<T> {
 		result=null;
 		isDone=false;
 	}
-
+	/**
+	 * retrieves the result the Future object holds if it has been resolved.
+	 * This is a blocking method! It waits for the computation in case it has
+	 * not been completed.
+	 * <p>
+	 * @return return the result of type T if it is available, if not wait until it is available.
+	 *
+	 */
+	public synchronized T get(){
+		while (result==null){
+			try {wait();}
+			catch (InterruptedException e){}
+		}
+		return result;
+	}
 	/**
 	 * retrieves the result the Future object holds if it has been resolved.
 	 * This is a blocking method! It waits for the computation in case it has
@@ -31,7 +45,7 @@ public class Future<T> {
 	 *
 	 */
 
-	public synchronized void resolve (T result) { //should be synchronized
+	public synchronized void resolve (T result) {
 		this.result=result;
 		isDone=true;
 		notifyAll();

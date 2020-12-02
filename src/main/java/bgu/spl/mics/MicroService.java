@@ -145,10 +145,9 @@ public abstract class MicroService implements Runnable {
      * Signals the event loop that it must terminate after handling the current
      * message.
      */
-    protected final void terminate() { //todo: check
+    protected final void terminate() {
         bus.unregister(this);
         Thread.currentThread().interrupt();
-        //how to terminate itself?
     }
 
     /**

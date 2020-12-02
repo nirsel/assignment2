@@ -16,6 +16,7 @@ import java.util.concurrent.CountDownLatch;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonWriter;
 
 /** This is the Main class of the application. You should parse the input file, 
  * create the different components of the application, and run the system.
@@ -33,6 +34,7 @@ public class Main {
 		new Thread(new LandoMicroservice(input.getLando(),latch)).start();
 		latch.await(); //main thread waits until other microservices initialized and waiting for messages
 		new Thread(new LeiaMicroservice(input.getAttacks())).start();
+
 
 	}
 }

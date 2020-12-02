@@ -39,8 +39,12 @@ public class C3POMicroservice extends MicroService {
             Thread.sleep(info.getDuration());
             ewoks.releaseEwoks(resources);
             complete(event,true);
+            Diary diary=Diary.getInstance();
+            diary.setC3POFinish(System.currentTimeMillis());
+            diary.setTotalAttacks();
         });
         subscribeBroadcast(TerminateBroadcast.class,(broad)-> {
+            Diary.getInstance().setC3POTerminate(System.currentTimeMillis());
             terminate();
         });
         latch.countDown();
