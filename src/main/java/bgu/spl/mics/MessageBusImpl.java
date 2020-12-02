@@ -62,13 +62,13 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
-		Future<T> promisedResult= resultMap.get(e); // retrieve the promised result associated with the event
-		promisedResult.resolve(result);
+		Future<T> promisedResult= resultMap.get(e); // retrieves the promised result associated with the event
+		promisedResult.resolve(result); //resolve this event
 	}
 
 	@Override
 	public synchronized void sendBroadcast(Broadcast b) {
-		if (messageMap.containsKey(b.getClass())){
+		if (messageMap.containsKey(b.getClass())){ // if this type of BC is registered
 			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(b.getClass());
 			for (MicroService m : queue){
 				ConcurrentLinkedQueue<Message> mesQueue=microServiceMap.get(m);
@@ -97,8 +97,8 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void register(MicroService m) {
-		if (!microServiceMap.containsKey(m)) {
-			microServiceMap.put(m, new ConcurrentLinkedQueue<Message>());
+		if (!microServiceMap.containsKey(m)) { // if m is not already in the MicroServiceMap
+			microServiceMap.put(m, new ConcurrentLinkedQueue<>());
 		}
 	}
 

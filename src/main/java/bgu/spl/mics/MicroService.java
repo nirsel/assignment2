@@ -62,7 +62,7 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-        if (!callbackMap.containsKey(type)){
+        if (!callbackMap.containsKey(type)){ // if this type of event doesn't exist yet in callbackMap
             callbackMap.put(type,callback);
             bus.subscribeEvent(type,this);
         }
@@ -89,8 +89,8 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-    	if (!callbackMap.containsKey(type)) {
-            callbackMap.put(type, callback);
+    	if (!callbackMap.containsKey(type)) { // if this type of BC doesn't exist yet in callbackMap
+            callbackMap.put(type, callback); // add this pair to callbackMap
             bus.subscribeBroadcast(type, this);
         }
     }
