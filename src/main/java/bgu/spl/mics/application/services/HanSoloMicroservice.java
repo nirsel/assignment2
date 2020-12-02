@@ -37,6 +37,7 @@ public class HanSoloMicroservice extends MicroService {
             Ewoks ewoks=Ewoks.getInstance();
             ewoks.acquireEwoks(resources);
             Thread.sleep(info.getDuration());
+            ewoks.releaseEwoks(resources);
             complete(event,true);
         });
         subscribeBroadcast(TerminateBroadcast.class,(broad)-> {

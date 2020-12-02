@@ -16,7 +16,8 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
 	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> messageMap;
 	private HashMap<Event, Future> resultMap; //concurrent?
-	private int numOfAttackEvents;
+	private Object eventLock=new Object();
+	private Object broadLock=new Object();
 
 	private static class MessageBusImplHolder {
 		private static MessageBusImpl instance=new MessageBusImpl();
@@ -35,28 +36,30 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public synchronized <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		if (messageMap.containsKey(type)){ // if this type of event already exists
-			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type); 
-			queue.add(m); // add m to this event queue
-		}
-		else { // this type of event doesn't exist
-			ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>(); // create a new queue for this type
-			newQueue.add(m);
-			messageMap.put(type,newQueue); // add the type and its queue to the map
+	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
+		synchronized (eventLock) {
+			if (messageMap.containsKey(type)) { // if this type of event already exists
+				ConcurrentLinkedQueue<MicroService> queue = messageMap.get(type);
+				queue.add(m); // add m to this event queue
+			} else { // this type of event doesn't exist
+				ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>(); // create a new queue for this type
+				newQueue.add(m);
+				messageMap.put(type, newQueue); // add the type and its queue to the map
+			}
 		}
 	}
 
 	@Override
-	public synchronized void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		if (messageMap.containsKey(type)){ // if this type of broadcast already exists
-			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(type);
-			queue.add(m);
-		}
-		else { // this type of broadcast doesn't exist
-			ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>();
-			newQueue.add(m);
-			messageMap.put(type,newQueue); // add the type and its queue to the map
+	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
+		synchronized (broadLock) {
+			if (messageMap.containsKey(type)) { // if this type of broadcast already exists
+				ConcurrentLinkedQueue<MicroService> queue = messageMap.get(type);
+				queue.add(m);
+			} else { // this type of broadcast doesn't exist
+				ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<MicroService>();
+				newQueue.add(m);
+				messageMap.put(type, newQueue); // add the type and its queue to the map
+			}
 		}
     }
 

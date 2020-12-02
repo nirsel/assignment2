@@ -34,23 +34,18 @@ public class Ewoks {
 
     public void acquireEwoks(List<Integer> resources){
         resources.sort(Comparator.comparingInt(o -> o)); //sorts the resources list to avoid deadlocks
+        synchronized (this) {
             for (Integer num : resources) {
-                if (ewokList.get(num-1).isAvailable())
-                    ewokList.get(num-1).acquire();
-                else {
-                    synchronized (this) {
-                        while (!ewokList.get(num - 1).isAvailable()) {
-                            try {
-                                wait();
-                            } catch (InterruptedException e) {
-                            }
-                        }
-                        ewokList.get(num - 1).acquire();
-                    }
+                while (!ewokList.get(num - 1).isAvailable()) {
+                    try { wait();}
+                    catch (InterruptedException e) {}
                 }
+                ewokList.get(num - 1).acquire();
             }
-
+        }
     }
+
+
 
     public void releaseEwoks(List<Integer> resources){
         for (Integer num:resources){
