@@ -71,7 +71,7 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public synchronized void sendBroadcast(Broadcast b) {
-		if (messageMap.containsKey(b.getClass())){ // if this type of BC is registered
+		if (messageMap.containsKey(b.getClass())&&messageMap.get(b.getClass()).size()>0){ // if this type of BC is registered
 			ConcurrentLinkedQueue<MicroService> queue=messageMap.get(b.getClass());
 			for (MicroService m : queue){
 				ConcurrentLinkedQueue<Message> mesQueue=microServiceMap.get(m);
@@ -84,7 +84,7 @@ public class MessageBusImpl implements MessageBus {
 	
 	@Override
 	public synchronized <T> Future<T> sendEvent(Event<T> e) {
-		if (messageMap.containsKey(e.getClass())) {
+		if (messageMap.containsKey(e.getClass())&&messageMap.get(e.getClass()).size()>0) {
 			ConcurrentLinkedQueue<MicroService> microQueue = messageMap.get(e.getClass());
 			MicroService ms = microQueue.poll();
 			microQueue.add(ms); //round robin - removes the first and adds him to the tail of the queue
