@@ -29,6 +29,7 @@ public abstract class MicroService implements Runnable {
     private String name;
     private MessageBus bus;
     private HashMap<Class<? extends Message>,Callback> callbackMap;
+    boolean toContinue=true;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -139,7 +140,7 @@ public abstract class MicroService implements Runnable {
     /**
      * this method is called once when the event loop starts.
      */
-    protected abstract void initialize() throws InterruptedException;
+    protected abstract void initialize();
 
     /**
      * Signals the event loop that it must terminate after handling the current
@@ -147,6 +148,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final void terminate() {
         bus.unregister(this);
+        toContinue=false;
         Thread.currentThread().interrupt();
     }
 
@@ -164,22 +166,19 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run(){
-        try {
-            MessageBus bus= MessageBusImpl.getInstance();
-            bus.register(this);
-            initialize();
-        } catch (InterruptedException e) { //todo:check
-        }
-        while(true){
+
+        MessageBus bus= MessageBusImpl.getInstance();
+        bus.register(this);
+        initialize();
+        while(toContinue){
             try {
                 Message task = bus.awaitMessage(this);
-                callbackMap.get(task).call(task);
+                callbackMap.get(task.getClass()).call(task);
             } catch (InterruptedException e) {
             }
 
-
         }
-
+        Thread.currentThread().interrupt();
     }
 
 

@@ -24,6 +24,7 @@ public class Ewoks {
     }
 
     public void setEwoksList(int num){
+        ewokList=new Vector<Ewok>(num);
         for (int i=1;i<=num;i++)
             ewokList.add(new Ewok(i));
     }

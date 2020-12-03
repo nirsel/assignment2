@@ -24,17 +24,35 @@ import com.google.gson.stream.JsonWriter;
  */
 public class Main {
 	public static void main(String[] args) throws InterruptedException, IOException {
-		Input input=JsonInputReader.getInputFromJson("input.json"); //todo:check how to get input
+		Input input=JsonInputReader.getInputFromJson("/home/spl211/IdeaProjects/assignment2/input.json"); //todo:check how to get input
 		Ewoks ewoks=Ewoks.getInstance();
 		ewoks.setEwoksList(input.getEwoks());
 		CountDownLatch latch=new CountDownLatch(4);
-		new Thread(new HanSoloMicroservice(latch)).start();
-		new Thread(new C3POMicroservice((latch))).start();
-		new Thread(new R2D2Microservice(input.getR2D2(),latch)).start();
-		new Thread(new LandoMicroservice(input.getLando(),latch)).start();
+		Thread t1=new Thread(new HanSoloMicroservice(latch));
+		t1.start();
+		Thread t2=new Thread(new C3POMicroservice((latch)));
+		t2.start();
+		Thread t3=new Thread(new R2D2Microservice(input.getR2D2(),latch));
+		t3.start();
+		Thread t4=new Thread(new LandoMicroservice(input.getLando(),latch));
+		t4.start();
 		latch.await(); //main thread waits until other microservices initialized and waiting for messages
-		new Thread(new LeiaMicroservice(input.getAttacks())).start();
-
-
+		Thread t5=new Thread(new LeiaMicroservice(input.getAttacks()));
+		t5.start();
+		t1.join();
+		t2.join();
+		t3.join();
+		t4.join();
+		t5.join();
+		Diary diary=Diary.getInstance();
+		System.out.println("total attacks: "+diary.getTotalAttacks());
+		System.out.println("HanSolo finish: "+diary.getHanSoloFinish());
+		System.out.println("C3PO finish: "+diary.getC3POFinish());
+		System.out.println("R2D2 deactivate: "+diary.getR2D2Deactivate());
+		System.out.println("Leia terminate: "+diary.getLeiaTerminate());
+		System.out.println("HanSolo terminate: "+diary.getHanSoloTerminate());
+		System.out.println("C3PO terminate: "+diary.getC3POTerminate());
+		System.out.println("R2D2 terminate: "+diary.getR2D2Terminate());
+		System.out.println("Lando terminate: "+diary.getLandoTerminate());
 	}
 }
