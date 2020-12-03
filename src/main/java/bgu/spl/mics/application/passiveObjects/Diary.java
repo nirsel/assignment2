@@ -98,9 +98,9 @@ public class Diary {
         LandoTerminate = landoTerminate;
     }
 
-    public AtomicInteger getNumberOfAttacks(){return totalAttacks;}
+    public AtomicInteger getNumberOfAttacks(){return totalAttacks;} //ron test
 
-    public void resetNumberAttacks(){totalAttacks=new AtomicInteger(0);}
+    public void resetNumberAttacks(){totalAttacks=new AtomicInteger(0);} //ron test
 
     private static class DiaryHolder{
         private static Diary diaryInstance=new Diary();

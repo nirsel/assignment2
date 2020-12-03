@@ -178,7 +178,7 @@ public abstract class MicroService implements Runnable {
             }
 
         }
-        Thread.currentThread().interrupt();
+
     }
 
 
