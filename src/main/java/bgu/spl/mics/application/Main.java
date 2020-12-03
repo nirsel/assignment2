@@ -54,7 +54,7 @@ public class Main {
 		System.out.println("C3PO terminate: "+diary.getC3POTerminate());
 		System.out.println("R2D2 terminate: "+diary.getR2D2Terminate());
 		System.out.println("Lando terminate: "+diary.getLandoTerminate());
-		Gson testBuilderJson = new GsonBuilder().create();
+
 		HashMap<String,Object> results=new HashMap<>();
 		results.put("totalAttacks",diary.getTotalAttacks());
 		results.put("HanSoloFinish",diary.getHanSoloFinish());
@@ -65,7 +65,7 @@ public class Main {
 		results.put("C3PO terminate",diary.getC3POTerminate());
 		results.put("R2D2 terminate",diary.getR2D2Terminate());
 		results.put("Lando terminate",diary.getLandoTerminate());
-
+		Gson testBuilderJson = new GsonBuilder().create();
 		try{
 			FileWriter fileWriter = new FileWriter("./output.json");
 			testBuilderJson.toJson(results,fileWriter);
