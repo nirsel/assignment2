@@ -27,6 +27,7 @@ public class HanSoloMicroservice extends MicroService {
         super("Han");
     }
 
+
     public void setLatch(CountDownLatch latch){
         this.latch=latch;
     }

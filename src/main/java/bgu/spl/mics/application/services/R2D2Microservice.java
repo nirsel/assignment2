@@ -27,7 +27,6 @@ public class R2D2Microservice extends MicroService {
         super("R2D2");
         this.duration=duration;
     }
-
     public void setLatch(CountDownLatch latch){
         this.latch=latch;
     }

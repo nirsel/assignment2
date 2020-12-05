@@ -15,8 +15,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class MessageBusImpl implements MessageBus {
 
 
-	private ConcurrentHashMap<MicroService, Queue<Message>> microServiceMap;
-	private ConcurrentHashMap<Class<? extends Message>, Queue<MicroService>> messageMap;
+	private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
+	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> messageMap;
 	private HashMap<Event, Future> resultMap; //concurrent?
 	private Object eventLock=new Object();
 	private Object broadLock=new Object();
@@ -28,8 +28,8 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	private MessageBusImpl(){
-		microServiceMap = new ConcurrentHashMap<MicroService, Queue<Message>>();
-		messageMap = new ConcurrentHashMap<Class<? extends Message>, Queue<MicroService>>();
+		microServiceMap = new ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>>();
+		messageMap = new ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>>();
 		resultMap = new HashMap<Event, Future>();
 
 	}
@@ -43,10 +43,10 @@ public class MessageBusImpl implements MessageBus {
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
 		synchronized (eventLock) {
 			if (messageMap.containsKey(type)) { // if this type of event already exists
-				Queue<MicroService> queue = messageMap.get(type);
+				ConcurrentLinkedQueue<MicroService> queue = messageMap.get(type);
 				queue.add(m); // add m to this event queue
 			} else { // this type of event doesn't exist
-				Queue<MicroService> newQueue = new ConcurrentLinkedQueue<>(); // create a new queue for this type
+				ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<>(); // create a new queue for this type
 				newQueue.add(m);
 				messageMap.put(type, newQueue); // add the type and its queue to the map
 			}
@@ -57,10 +57,10 @@ public class MessageBusImpl implements MessageBus {
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
 		synchronized (broadLock) {
 			if (messageMap.containsKey(type)) { // if this type of broadcast already exists
-				Queue<MicroService> queue = messageMap.get(type);
+				ConcurrentLinkedQueue<MicroService> queue = messageMap.get(type);
 				queue.add(m);
 			} else { // this type of broadcast doesn't exist
-				Queue<MicroService> newQueue = new ConcurrentLinkedQueue<>();
+				ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<>();
 				newQueue.add(m);
 				messageMap.put(type, newQueue); // add the type and its queue to the map
 			}
@@ -76,9 +76,9 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public synchronized void sendBroadcast(Broadcast b) {
 		if (messageMap.containsKey(b.getClass()) && messageMap.get(b.getClass()).size() > 0) { // if this type of BC is registered
-			Queue<MicroService> queue = messageMap.get(b.getClass());
+			ConcurrentLinkedQueue<MicroService> queue = messageMap.get(b.getClass());
 			for (MicroService m : queue) {
-				Queue<Message> mesQueue = microServiceMap.get(m);
+				ConcurrentLinkedQueue<Message> mesQueue = microServiceMap.get(m);
 				mesQueue.add(b);
 			}
 			notifyAll();
@@ -89,10 +89,10 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public synchronized <T> Future<T> sendEvent(Event<T> e) {
 		if (messageMap.containsKey(e.getClass()) && messageMap.get(e.getClass()).size() > 0) {
-			Queue<MicroService> microQueue = messageMap.get(e.getClass());
+			ConcurrentLinkedQueue<MicroService> microQueue = messageMap.get(e.getClass());
 			MicroService ms = microQueue.poll();
 			microQueue.add(ms); //round robin - removes the first and adds him to the tail of the queue
-			Queue<Message> messageQueue = microServiceMap.get(ms);
+			ConcurrentLinkedQueue<Message> messageQueue = microServiceMap.get(ms);
 			messageQueue.add(e);
 			Future<T> result = new Future<T>();
 			resultMap.put(e, result);
@@ -105,7 +105,7 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void register(MicroService m) {
 		if (!microServiceMap.containsKey(m)) { // if m is not already in the MicroServiceMap
-			microServiceMap.put(m, new LinkedList<>());
+			microServiceMap.put(m, new ConcurrentLinkedQueue<>());
 		}
 	}
 

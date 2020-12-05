@@ -24,7 +24,6 @@ public class LandoMicroservice  extends MicroService {
         super("R2D2");
         this.duration=duration;
     }
-
     public void setLatch(CountDownLatch latch){
         this.latch=latch;
     }

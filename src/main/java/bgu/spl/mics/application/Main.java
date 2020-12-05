@@ -24,7 +24,7 @@ import com.google.gson.stream.JsonWriter;
  */
 public class Main {
 	public static void main(String[] args) throws InterruptedException, IOException {
-		Input input=JsonInputReader.getInputFromJson("/home/spl211/IdeaProjects/assignment2/input.json"); //todo:check how to get input
+		Input input=JsonInputReader.getInputFromJson("/home/spl211/IdeaProjects/Assignment2/assignment2.1/input.json"); //todo:check how to get input
 		Ewoks ewoks=Ewoks.getInstance();
 		ewoks.setEwoksList(input.getEwoks());
 		CountDownLatch latch=new CountDownLatch(4);
@@ -37,12 +37,12 @@ public class Main {
 		LandoMicroservice lando=new LandoMicroservice(input.getLando());
 		lando.setLatch(latch);
 		Thread t1=new Thread(han);
-		Thread t2=new Thread(c3po);
-		Thread t3=new Thread(r2d2);
-		Thread t4=new Thread(lando);
 		t1.start();
+		Thread t2=new Thread(r2d2);
 		t2.start();
+		Thread t3=new Thread(c3po);
 		t3.start();
+		Thread t4=new Thread(lando);
 		t4.start();
 		latch.await(); //main thread waits until other microservices initialized and waiting for messages
 		Thread t5=new Thread(new LeiaMicroservice(input.getAttacks()));
@@ -53,29 +53,10 @@ public class Main {
 		t4.join();
 		t5.join();
 		Diary diary=Diary.getInstance();
-		System.out.println("total attacks: "+diary.getTotalAttacks());
-		System.out.println("HanSolo finish: "+diary.getHanSoloFinish());
-		System.out.println("C3PO finish: "+diary.getC3POFinish());
-		System.out.println("R2D2 deactivate: "+diary.getR2D2Deactivate());
-		System.out.println("Leia terminate: "+diary.getLeiaTerminate());
-		System.out.println("HanSolo terminate: "+diary.getHanSoloTerminate());
-		System.out.println("C3PO terminate: "+diary.getC3POTerminate());
-		System.out.println("R2D2 terminate: "+diary.getR2D2Terminate());
-		System.out.println("Lando terminate: "+diary.getLandoTerminate());
-		HashMap<String,Object> results=new HashMap<>();
-		results.put("totalAttacks",diary.getTotalAttacks());
-		results.put("HanSoloFinish",diary.getHanSoloFinish());
-		results.put("C3PO finish",diary.getC3POFinish());
-		results.put("R2D2 deactivate",diary.getR2D2Deactivate());
-		results.put("Leia terminate",diary.getLeiaTerminate());
-		results.put("HanSolo terminate",diary.getHanSoloTerminate());
-		results.put("C3PO terminate",diary.getC3POTerminate());
-		results.put("R2D2 terminate",diary.getR2D2Terminate());
-		results.put("Lando terminate",diary.getLandoTerminate());
 		Gson testBuilderJson = new GsonBuilder().create();
 		try{
 			FileWriter fileWriter = new FileWriter("./output.json");
-			testBuilderJson.toJson(results,fileWriter);
+			testBuilderJson.toJson(diary,fileWriter);
 			fileWriter.flush();
 			fileWriter.close();
 		}catch(Exception fileWriteException){
