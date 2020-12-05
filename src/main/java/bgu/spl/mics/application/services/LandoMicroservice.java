@@ -4,6 +4,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Diary;
@@ -17,13 +18,17 @@ import java.util.concurrent.CountDownLatch;
  */
 public class LandoMicroservice  extends MicroService {
     long duration;
-    CountDownLatch latch;
+    CountDownLatch latch=null;
 
-    public LandoMicroservice(long duration, CountDownLatch latch){
+    public LandoMicroservice(long duration){
         super("R2D2");
         this.duration=duration;
+    }
+
+    public void setLatch(CountDownLatch latch){
         this.latch=latch;
     }
+
 
     @Override
     protected void initialize() {

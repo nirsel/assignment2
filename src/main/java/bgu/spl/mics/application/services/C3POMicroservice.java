@@ -5,6 +5,7 @@ import java.util.concurrent.CountDownLatch;
 import bgu.spl.mics.MessageBus;
 import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Attack;
@@ -21,12 +22,16 @@ import bgu.spl.mics.application.passiveObjects.Ewoks;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class C3POMicroservice extends MicroService {
-	CountDownLatch latch;
+	CountDownLatch latch=null;
 
-    public C3POMicroservice(CountDownLatch latch) {
+    public C3POMicroservice() {
         super("C3PO");
+    }
+
+    public void setLatch(CountDownLatch latch){
         this.latch=latch;
     }
+
 
     @Override
     protected void initialize() {

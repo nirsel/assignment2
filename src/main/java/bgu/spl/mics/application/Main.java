@@ -28,13 +28,21 @@ public class Main {
 		Ewoks ewoks=Ewoks.getInstance();
 		ewoks.setEwoksList(input.getEwoks());
 		CountDownLatch latch=new CountDownLatch(4);
-		Thread t1=new Thread(new HanSoloMicroservice(latch));
+		HanSoloMicroservice han=new HanSoloMicroservice();
+		han.setLatch(latch);
+		C3POMicroservice c3po=new C3POMicroservice();
+		c3po.setLatch(latch);
+		R2D2Microservice r2d2=new R2D2Microservice(input.getR2D2());
+		r2d2.setLatch(latch);
+		LandoMicroservice lando=new LandoMicroservice(input.getLando());
+		lando.setLatch(latch);
+		Thread t1=new Thread(han);
+		Thread t2=new Thread(c3po);
+		Thread t3=new Thread(r2d2);
+		Thread t4=new Thread(lando);
 		t1.start();
-		Thread t2=new Thread(new C3POMicroservice((latch)));
 		t2.start();
-		Thread t3=new Thread(new R2D2Microservice(input.getR2D2(),latch));
 		t3.start();
-		Thread t4=new Thread(new LandoMicroservice(input.getLando(),latch));
 		t4.start();
 		latch.await(); //main thread waits until other microservices initialized and waiting for messages
 		Thread t5=new Thread(new LeiaMicroservice(input.getAttacks()));
@@ -54,7 +62,6 @@ public class Main {
 		System.out.println("C3PO terminate: "+diary.getC3POTerminate());
 		System.out.println("R2D2 terminate: "+diary.getR2D2Terminate());
 		System.out.println("Lando terminate: "+diary.getLandoTerminate());
-
 		HashMap<String,Object> results=new HashMap<>();
 		results.put("totalAttacks",diary.getTotalAttacks());
 		results.put("HanSoloFinish",diary.getHanSoloFinish());
@@ -75,4 +82,5 @@ public class Main {
 
 		}
 	}
+
 }
