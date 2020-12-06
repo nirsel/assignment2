@@ -4,6 +4,7 @@ import java.util.List;
 
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.AttackEvent;
+import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.DeactivationEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Attack;
@@ -39,7 +40,11 @@ public class LeiaMicroservice extends MicroService {
         for (int i=0;i<results.length;i++){
             results[i].get();
         }
-        sendEvent(new DeactivationEvent());
+        boolean ans =sendEvent(new DeactivationEvent()).get();
+        if(ans){
+            sendEvent(new BombDestroyerEvent());
+        }
+
     }
 
 }

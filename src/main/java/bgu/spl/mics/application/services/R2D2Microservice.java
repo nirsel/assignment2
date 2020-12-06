@@ -33,15 +33,14 @@ public class R2D2Microservice extends MicroService {
 
     @Override
     protected void initialize() { //todo:complete
-        subscribeEvent(DeactivationEvent.class,(event)->{
+        subscribeEvent(DeactivationEvent.class,(event)-> {
             Thread.sleep(duration);
-            complete(event,true);
-            Diary.getInstance().setR2D2Deactivate(System.currentTimeMillis());
-            sendEvent(new BombDestroyerEvent());});
-        subscribeBroadcast(TerminateBroadcast.class,(broad)-> {
-            Diary.getInstance().setR2D2Terminate(System.currentTimeMillis());
-            terminate();
-        });
-        latch.countDown();
-    }
+            complete(event, true);
+            Diary.getInstance().setR2D2Deactivate(System.currentTimeMillis());});
+            subscribeBroadcast(TerminateBroadcast.class, (broad) -> {
+                Diary.getInstance().setR2D2Terminate(System.currentTimeMillis());
+                terminate();
+            });
+            latch.countDown();
+        }
 }
