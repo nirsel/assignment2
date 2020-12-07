@@ -32,7 +32,7 @@ public class R2D2Microservice extends MicroService {
     }
 
     @Override
-    protected void initialize() { //todo:complete
+    protected void initialize() {
         subscribeEvent(DeactivationEvent.class,(event)-> {
             Thread.sleep(duration);
             complete(event, true);
