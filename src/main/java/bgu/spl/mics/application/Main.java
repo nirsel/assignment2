@@ -52,11 +52,10 @@ public class Main {
 		t3.join();
 		t4.join();
 		t5.join();
-		Diary diary=Diary.getInstance();
 		Gson testBuilderJson = new GsonBuilder().create();
 		try{
 			FileWriter fileWriter = new FileWriter("output.json");
-			testBuilderJson.toJson(diary,fileWriter);
+			testBuilderJson.toJson(Diary.getInstance(),fileWriter);
 			fileWriter.flush();
 			fileWriter.close();
 		}catch(Exception fileWriteException){
