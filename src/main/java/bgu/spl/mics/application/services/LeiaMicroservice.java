@@ -40,10 +40,9 @@ public class LeiaMicroservice extends MicroService {
         for (int i=0;i<results.length;i++){
             results[i].get();
         }
-        boolean ans =sendEvent(new DeactivationEvent()).get();
-        if(ans){
-            sendEvent(new BombDestroyerEvent());
-        }
+        sendEvent(new DeactivationEvent()).get();
+        sendEvent(new BombDestroyerEvent());
+
 
     }
 

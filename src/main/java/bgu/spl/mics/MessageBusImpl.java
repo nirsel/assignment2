@@ -3,7 +3,6 @@ import bgu.spl.mics.application.services.LeiaMicroservice;
 
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -17,10 +16,10 @@ public class MessageBusImpl implements MessageBus {
 
 	private ConcurrentHashMap<MicroService, ConcurrentLinkedQueue<Message>> microServiceMap;
 	private ConcurrentHashMap<Class<? extends Message>, ConcurrentLinkedQueue<MicroService>> messageMap;
-	private HashMap<Event, Future> resultMap; //concurrent?
+	private HashMap<Event, Future> resultMap;
 	private Object eventLock=new Object();
 	private Object broadLock=new Object();
-	private Object unregisterLock=new Object();
+
 
 
 	private static class MessageBusImplHolder {
@@ -74,14 +73,14 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public synchronized void sendBroadcast(Broadcast b) {
+	public void sendBroadcast(Broadcast b) {
 		if (messageMap.containsKey(b.getClass()) && messageMap.get(b.getClass()).size() > 0) { // if this type of BC is registered
 			ConcurrentLinkedQueue<MicroService> queue = messageMap.get(b.getClass());
 			for (MicroService m : queue) {
 				ConcurrentLinkedQueue<Message> mesQueue = microServiceMap.get(m);
 				mesQueue.add(b);
 			}
-			notifyAll();
+			synchronized (this){notifyAll();}
 		}
 	}
 

@@ -24,7 +24,7 @@ import com.google.gson.stream.JsonWriter;
  */
 public class Main {
 	public static void main(String[] args) throws InterruptedException, IOException {
-		Input input=JsonInputReader.getInputFromJson("/home/spl211/IdeaProjects/Assignment2/assignment2.1/input.json"); //todo:check how to get input
+		Input input=JsonInputReader.getInputFromJson("input.json"); //todo:check how to get input
 		Ewoks ewoks=Ewoks.getInstance();
 		ewoks.setEwoksList(input.getEwoks());
 		CountDownLatch latch=new CountDownLatch(4);
@@ -55,7 +55,7 @@ public class Main {
 		Diary diary=Diary.getInstance();
 		Gson testBuilderJson = new GsonBuilder().create();
 		try{
-			FileWriter fileWriter = new FileWriter("./output.json");
+			FileWriter fileWriter = new FileWriter("output.json");
 			testBuilderJson.toJson(diary,fileWriter);
 			fileWriter.flush();
 			fileWriter.close();
