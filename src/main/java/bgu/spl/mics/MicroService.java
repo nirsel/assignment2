@@ -173,9 +173,7 @@ public abstract class MicroService implements Runnable {
             try {
                 Message task = bus.awaitMessage(this);
                 callbackMap.get(task.getClass()).call(task);
-            } catch (InterruptedException e) {
-            }
-
+            } catch (InterruptedException e) { terminate(); }
         }
 
     }
