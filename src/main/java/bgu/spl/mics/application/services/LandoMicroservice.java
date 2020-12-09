@@ -16,8 +16,8 @@ import java.util.concurrent.CountDownLatch;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class LandoMicroservice  extends MicroService {
-    long duration;
-    CountDownLatch latch=null;
+    private long duration;
+    private CountDownLatch latch=null;
 
     public LandoMicroservice(long duration){
         super("R2D2");

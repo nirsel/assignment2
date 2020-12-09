@@ -13,7 +13,7 @@ import com.google.gson.GsonBuilder;
  */
 public class Main {
 	public static void main(String[] args) throws InterruptedException, IOException {
-		Input input=JsonInputReader.getInputFromJson("input.json");
+		Input input=JsonInputReader.getInputFromJson(args[0]);
 		Ewoks ewoks=Ewoks.getInstance();
 		ewoks.setEwoksList(input.getEwoks());
 		CountDownLatch latch=new CountDownLatch(4);
@@ -43,7 +43,7 @@ public class Main {
 		t5.join();
 		Gson testBuilderJson = new GsonBuilder().create();
 		try{
-			FileWriter fileWriter = new FileWriter("output.json");
+			FileWriter fileWriter = new FileWriter(args[1]);
 			testBuilderJson.toJson(Diary.getInstance(),fileWriter);
 			fileWriter.flush();
 			fileWriter.close();

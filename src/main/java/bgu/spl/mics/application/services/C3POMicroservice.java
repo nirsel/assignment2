@@ -19,7 +19,7 @@ import bgu.spl.mics.application.passiveObjects.Ewoks;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class C3POMicroservice extends MicroService {
-	CountDownLatch latch=null;
+	private CountDownLatch latch=null;
 
     public C3POMicroservice() {
         super("C3PO");
