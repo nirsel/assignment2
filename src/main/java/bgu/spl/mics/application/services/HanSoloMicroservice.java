@@ -3,10 +3,7 @@ package bgu.spl.mics.application.services;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import bgu.spl.mics.MessageBus;
-import bgu.spl.mics.MessageBusImpl;
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.Main;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Attack;
@@ -26,14 +23,19 @@ public class HanSoloMicroservice extends MicroService {
     public HanSoloMicroservice() {
         super("Han");
     }
-
+    /**
+     * Sets the countdown latch data member.
+     * @param latch the countdown latch.
+     */
 
     public void setLatch(CountDownLatch latch){
         this.latch=latch;
     }
 
 
-
+    /**
+     * initialize the relevant information of this MS.
+     */
     @Override
     protected void initialize() {
 

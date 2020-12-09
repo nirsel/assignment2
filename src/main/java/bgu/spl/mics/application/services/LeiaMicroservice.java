@@ -1,6 +1,4 @@
 package bgu.spl.mics.application.services;
-import java.util.ArrayList;
-import java.util.List;
 
 import bgu.spl.mics.*;
 import bgu.spl.mics.application.messages.AttackEvent;
@@ -27,7 +25,9 @@ public class LeiaMicroservice extends MicroService {
 		this.attacks = attacks;
 		results=new Future[this.attacks.length];
     }
-
+    /**
+     * initialize the relevant information of this MS.
+     */
     @Override
     protected void initialize() {
         subscribeBroadcast(TerminateBroadcast.class,(event)->{

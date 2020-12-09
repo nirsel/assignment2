@@ -1,10 +1,9 @@
 package bgu.spl.mics.application.services;
 
 
-import bgu.spl.mics.MessageBus;
-import bgu.spl.mics.MessageBusImpl;
+
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.Main;
+
 import bgu.spl.mics.application.messages.BombDestroyerEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Diary;
@@ -24,10 +23,17 @@ public class LandoMicroservice  extends MicroService {
         super("R2D2");
         this.duration=duration;
     }
+    /**
+     * Sets the countdown latch data member.
+     * @param latch the countdown latch.
+     */
     public void setLatch(CountDownLatch latch){
         this.latch=latch;
     }
 
+    /**
+     * initialize the relevant information of this MS.
+     */
 
     @Override
     protected void initialize() {

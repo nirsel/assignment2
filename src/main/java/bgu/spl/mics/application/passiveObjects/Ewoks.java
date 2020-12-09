@@ -1,8 +1,5 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import bgu.spl.mics.MessageBusImpl;
-
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
@@ -23,16 +20,28 @@ public class Ewoks {
         private static Ewoks instance=new Ewoks();
     }
 
+
+    /**
+     * Sets the list of ewoks in ewokList.
+     * @param num - represents the number of ewoks.
+     */
     public void setEwoksList(int num){
         ewokList=new Vector<Ewok>();
         for (int i=1;i<=num;i++)
             ewokList.add(new Ewok(i));
     }
 
+    /**
+     * @return an instance of Ewoks.
+     */
     public static Ewoks getInstance(){
         return EwoksHolder.instance;
     }
 
+    /**
+     * Acquires the needed ewoks listed in resources.
+     * @param resources - List of required ewoks to be acquired from this.
+     */
     public void acquireEwoks(List<Integer> resources){
         resources.sort(Comparator.comparingInt(o -> o)); //sorts the resources list to avoid deadlocks
         for (Integer num:resources)
@@ -40,7 +49,10 @@ public class Ewoks {
     }
 
 
-
+    /**
+     * Release the ewoks.
+     * @param resources - list of ewoks to be released.
+     */
     public void releaseEwoks(List<Integer> resources){
         for (Integer num:resources){
             ewokList.get(num-1).release();

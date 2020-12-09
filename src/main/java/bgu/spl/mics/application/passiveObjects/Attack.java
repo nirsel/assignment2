@@ -21,12 +21,18 @@ public class Attack {
         this.duration = duration;
     }
 
-    //Getters
+    /**
+     * Getter of duration data member of this class.
+      * @return  int duration -  the duration of sleep needed in order to complete this task.
+     */
     public int getDuration() {
         return duration;
     }
 
-
+    /**
+     * Getter of the serials of the ewoks needed for this Attack.
+     * @return List<Integer> serials - the List of serial number of the ewoks needed.
+     */
     public List<Integer> getSerials() {
         return serials;
     }

@@ -16,9 +16,6 @@ public class Ewok {
         available=true;
     }
 
-    public int getSerialNumber() {
-        return serialNumber;
-    }
 
     /**
      * Acquires an Ewok
@@ -39,6 +36,9 @@ public class Ewok {
         notifyAll();
     }
 
+    /**
+     * @return boolean available = true if the ewok is available, false otherwise.
+     */
     public boolean isAvailable(){
         return available;
     }
