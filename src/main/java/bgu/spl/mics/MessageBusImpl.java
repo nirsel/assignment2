@@ -41,31 +41,41 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		synchronized (type.getClass()) {
-			if (messageMap.containsKey(type)) { // if this type of event already exists
-				ConcurrentLinkedQueue<MicroService> queue = messageMap.get(type);
-				queue.add(m); // add m to this event queue
-			} else { // this type of event doesn't exist
+		if (messageMap.containsKey(type)) { // if this type of event already exists
+			ConcurrentLinkedQueue<MicroService> queue = messageMap.get(type);
+			queue.add(m); // add m to this event queue
+			}
+		else { synchronized (type.getClass())  { // this type of event doesn't exist
+				if (messageMap.containsKey(type)) { // if this type of event already exists
+					ConcurrentLinkedQueue<MicroService> queue = messageMap.get(type);
+					queue.add(m); // add m to this event queue
+				}
 				ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<>(); // create a new queue for this type
 				newQueue.add(m);
 				messageMap.put(type, newQueue); // add the type and its queue to the map
 			}
+		  }
 		}
-	}
+
+
 
 	@Override
 	public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		synchronized (type.getClass()) {
 			if (messageMap.containsKey(type)) { // if this type of broadcast already exists
 				ConcurrentLinkedQueue<MicroService> queue = messageMap.get(type);
 				queue.add(m);
-			} else { // this type of broadcast doesn't exist
-				ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<>();
-				newQueue.add(m);
-				messageMap.put(type, newQueue); // add the type and its queue to the map
+			} else { synchronized (type.getClass()) {// this type of broadcast doesn't exist
+				if (messageMap.containsKey(type)) { // if this type of broadcast already exists
+					ConcurrentLinkedQueue<MicroService> queue = messageMap.get(type);
+					queue.add(m);
+				}
+					ConcurrentLinkedQueue<MicroService> newQueue = new ConcurrentLinkedQueue<>();
+					newQueue.add(m);
+					messageMap.put(type, newQueue); // add the type and its queue to the map
+				}
 			}
 		}
-    }
+
 
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
