@@ -8,6 +8,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * Do not add to this class nothing but a single constructor, getters and setters.
  */
+
+
+/**
+ * class Diary records the flow of the events and their timing in the battle.
+ */
 public class Diary {
 
     private AtomicInteger totalAttacks=new AtomicInteger(0);
