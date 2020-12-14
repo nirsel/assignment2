@@ -103,6 +103,7 @@ public class Diary {
         LandoTerminate = landoTerminate;
     }
 
+
     private static class DiaryHolder{
         private static Diary diaryInstance=new Diary();
     }
